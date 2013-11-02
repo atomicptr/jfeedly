@@ -19,5 +19,7 @@ public class Example {
         JFeedly feedly = JFeedly.createSandboxHandler(secretApiKey);
 
         feedly.authenticate();
+
+        feedly.getProfile();
     }
 }

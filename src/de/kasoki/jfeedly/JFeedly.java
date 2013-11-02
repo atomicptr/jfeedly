@@ -3,6 +3,7 @@ package de.kasoki.jfeedly;
 import de.kasoki.jfeedly.components.BrowserFrame;
 import de.kasoki.jfeedly.components.OnAuthenticatedListener;
 import de.kasoki.jfeedly.model.FeedlyConnection;
+import de.kasoki.jfeedly.model.Profile;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -10,6 +11,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 public class JFeedly {
@@ -131,12 +134,71 @@ public class JFeedly {
         return null;
     }
 
+    private String sendGetRequestToFeedly(String apiUrl, String urlParameters) {
+        try {
+            String url = this.getBaseUrl() + apiUrl;
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+
+            //add request header
+            con.setRequestProperty("User-Agent", "jfeedly");
+            con.setRequestProperty("Authorization", "OAuth " + this.connection.getAccessToken());
+
+            int responseCode = con.getResponseCode();
+            System.out.println("\nFeeldy GET: " + url);
+            System.out.println("Response Code : " + responseCode);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            //print result
+            System.out.println(response.toString());
+
+            return response.toString();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     private String getAuthenticationUrl() {
         return this.getBaseUrl() + "/v3/auth/auth?response_type=code&client_id=" + this.clientId + "&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions";
     }
 
     private String getBaseUrl() {
         return "http://" + this.basename + ".feedly.com";
+    }
+
+    public void setOnAuthenticatedListener(OnAuthenticatedListener listener) {
+        this.listener = listener;
+    }
+
+    public Profile getProfile() {
+        if(this.connection != null) {
+            String response = sendGetRequestToFeedly("/v3/profile/", "");
+
+            JSONObject object = new JSONObject(response);
+
+            return Profile.fromJSONObject(object);
+        } else {
+            System.err.println("JFeedly: Connection required to do this...\n\nCall jfeedlyInstance.authenticate();");
+        }
+
+        return null;
     }
 
     public static JFeedly createSandboxHandler(String apiSecretKey) {
