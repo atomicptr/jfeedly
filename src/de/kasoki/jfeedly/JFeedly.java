@@ -71,7 +71,7 @@ public class JFeedly {
 
         String refreshToken = this.connection.getRefreshToken();
 
-        String urlParameters = "refresh_token=" + refreshToken + "&client_id=" + this.clientId + "&client_secret=" + this.clientId + "&grant_type=refresh_token";
+        String urlParameters = "refresh_token=" + refreshToken + "&client_id=" + this.clientId + "&client_secret=" + this.apiSecretKey + "&grant_type=refresh_token";
 
         String response = sendPostRequestToFeedly(apiUrl, urlParameters);
 
