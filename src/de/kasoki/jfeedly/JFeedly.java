@@ -22,6 +22,8 @@ public class JFeedly {
     private String clientId;
     private String apiSecretKey;
 
+    private OnAuthenticatedListener listener = null;
+
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
         this.clientId = clientId;
@@ -29,12 +31,11 @@ public class JFeedly {
     }
 
     public void authenticate() {
-
         if(!FeedlyConnection.oldConnectionExists()) {
             String authUrl = this.getAuthenticationUrl();
             BrowserFrame frame = new BrowserFrame(appName + " Authenticate", authUrl);
 
-            frame.setOnAuthenticatedListener(new OnAuthenticatedListener() {
+            frame.setOnAuthenticatedListener(new BrowserFrame.OnBrowserAuthenticatedListener() {
                 @Override
                 public void onSignedIn(String code) {
                     JFeedly.this.requestNewTokens(code);
@@ -50,6 +51,10 @@ public class JFeedly {
 
                 this.refreshTokens();
             }
+        }
+
+        if(listener != null) {
+            listener.onAuthenticated();
         }
     }
 

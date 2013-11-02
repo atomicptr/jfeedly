@@ -20,7 +20,11 @@ public class BrowserFrame extends JFrame {
     private WebView webView;
     private Runnable checkIfSignedIn;
     private volatile boolean isSignedIn = false;
-    private OnAuthenticatedListener listener;
+    private OnBrowserAuthenticatedListener listener;
+
+    public static interface OnBrowserAuthenticatedListener {
+        void onSignedIn(String code);
+    };
 
     public BrowserFrame(String title, String url) {
         this.url = url;
@@ -43,7 +47,7 @@ public class BrowserFrame extends JFrame {
         });
     }
 
-    public void setOnAuthenticatedListener(OnAuthenticatedListener listener) {
+    public void setOnAuthenticatedListener(OnBrowserAuthenticatedListener listener) {
         this.listener = listener;
     }
 
