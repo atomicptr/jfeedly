@@ -2,8 +2,10 @@ package de.kasoki.jfeedly;
 
 import de.kasoki.jfeedly.components.BrowserFrame;
 import de.kasoki.jfeedly.components.OnAuthenticatedListener;
+import de.kasoki.jfeedly.model.Categories;
 import de.kasoki.jfeedly.model.FeedlyConnection;
 import de.kasoki.jfeedly.model.Profile;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -213,6 +215,20 @@ public class JFeedly {
             JSONObject object = new JSONObject(response);
 
             return Profile.fromJSONObject(object);
+        } else {
+            System.err.println("JFeedly: Connection required to do this...\n\nCall jfeedlyInstance.authenticate();");
+        }
+
+        return null;
+    }
+
+    public Categories getCategories() {
+        if(this.connection != null) {
+            String response = sendGetRequestToFeedly("/v3/categories/", "");
+
+            JSONArray array = new JSONArray(response);
+
+            return Categories.fromJSONArray(array);
         } else {
             System.err.println("JFeedly: Connection required to do this...\n\nCall jfeedlyInstance.authenticate();");
         }
