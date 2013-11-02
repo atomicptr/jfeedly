@@ -14,7 +14,9 @@ public class Example {
             e.printStackTrace();
         }
 
-        JFeedly feedly = JFeedly.createSandboxHandler(prop.getProperty("secret_api_key"));
+        String secretApiKey = prop.getProperty("secret_api_key");
+
+        JFeedly feedly = JFeedly.createSandboxHandler(secretApiKey);
 
         feedly.authenticate();
     }
