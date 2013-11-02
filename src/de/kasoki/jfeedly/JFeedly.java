@@ -2,19 +2,118 @@ package de.kasoki.jfeedly;
 
 import de.kasoki.jfeedly.components.BrowserFrame;
 import de.kasoki.jfeedly.components.OnAuthenticatedListener;
+import de.kasoki.jfeedly.model.FeedlyConnection;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class JFeedly {
 
-    public static void main(String[] args) {
-        BrowserFrame frame = new BrowserFrame("JFeedly example", "http://sandbox.feedly.com/v3/auth/auth?response_type=code&client_id=sandbox&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions");
+    private String appName = "JFeedly";
 
-        frame.setOnAuthenticatedListener(new OnAuthenticatedListener() {
-            @Override
-            public void onSignedIn(String code) {
-                System.out.println("Code: " + code);
+    private FeedlyConnection connection;
+
+    private String basename;
+    private String clientId;
+    private String apiSecretKey;
+
+    private JFeedly(String basename, String clientId, String apiSecretKey) {
+        this.basename = basename;
+        this.clientId = clientId;
+        this.apiSecretKey = apiSecretKey;
+    }
+
+    public void authenticate() {
+
+        if(!FeedlyConnection.oldConnectionExists()) {
+            String authUrl = this.getAuthenticationUrl();
+            BrowserFrame frame = new BrowserFrame(appName + " Authenticate", authUrl);
+
+            frame.setOnAuthenticatedListener(new OnAuthenticatedListener() {
+                @Override
+                public void onSignedIn(String code) {
+                    JFeedly.this.requestNewTokens(code);
+                }
+            });
+
+            frame.setVisible(true);
+        } else {
+            connection = FeedlyConnection.restoreConnection();
+
+            if(connection.isExpired()) {
+                // TODO: refresh connection
+                System.err.println("access token is expired");
             }
-        });
+        }
+    }
 
-        frame.setVisible(true);
+    private void requestNewTokens(String code) {
+        try {
+            String url = this.getBaseUrl() + "/v3/auth/token/";
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            //add reuqest header
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "jfeedly");
+            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+            String urlParameters = "code=" + code + "&client_id=sandbox&client_secret=" + this.apiSecretKey +
+                    "&redirect_uri=http://localhost&grant_type=authorization_code";
+
+            // Send post request
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(urlParameters);
+            wr.flush();
+            wr.close();
+
+            int responseCode = con.getResponseCode();
+            System.out.println("\nPOST: " + url);
+            System.out.println("parameters : " + urlParameters);
+            System.out.println("\nResponse Code : " + responseCode);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            String serverResponse = response.toString();
+
+            //print response
+            System.out.println(serverResponse);
+
+            JSONObject object = new JSONObject(serverResponse);
+
+            this.connection = FeedlyConnection.newConnection(object);
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private String getAuthenticationUrl() {
+        return this.getBaseUrl() + "/v3/auth/auth?response_type=code&client_id=" + this.clientId + "&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions";
+    }
+
+    private String getBaseUrl() {
+        return "http://" + this.basename + ".feedly.com";
+    }
+
+    public static JFeedly createSandboxHandler(String apiSecretKey) {
+        return new JFeedly("sandbox", "sandbox", apiSecretKey);
+    }
+
+    public static JFeedly createHandler(String clientId, String apiSecretKey) {
+        return new JFeedly("cloud", clientId, apiSecretKey);
     }
 }
