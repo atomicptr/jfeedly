@@ -56,7 +56,7 @@ public class FeedlyConnection {
         Properties prop = new Properties();
 
         try {
-            //load a properties file
+            //load connection properties file
             prop.load(new FileInputStream("connection.properties"));
 
             HashMap<String, String> map = createConnectionHashMap(prop.getProperty("access_token"),
