@@ -9,7 +9,7 @@ public class Example {
         Properties prop = new Properties();
 
         try {
-            prop.load(new FileInputStream("connection.properties"));
+            prop.load(new FileInputStream("settings.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
