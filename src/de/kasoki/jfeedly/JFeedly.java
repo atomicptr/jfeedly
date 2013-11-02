@@ -18,6 +18,7 @@ import java.net.URL;
 public class JFeedly {
 
     private String appName = "JFeedly";
+    private boolean verbose = false;
 
     private FeedlyConnection connection;
 
@@ -107,9 +108,12 @@ public class JFeedly {
             wr.close();
 
             int responseCode = con.getResponseCode();
-            System.out.println("\nPOST to: " + url);
-            System.out.println("parameters : " + urlParameters);
-            System.out.println("\nResponse Code : " + responseCode);
+
+            if(verbose) {
+                System.out.println("\nPOST to: " + url);
+                System.out.println("parameters : " + urlParameters);
+                System.out.println("\nResponse Code : " + responseCode);
+            }
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -123,8 +127,10 @@ public class JFeedly {
 
             String serverResponse = response.toString();
 
-            //print response
-            System.out.println(serverResponse);
+            if(verbose) {
+                //print response
+                System.out.println(serverResponse);
+            }
 
             return serverResponse;
         } catch(IOException ex) {
@@ -147,8 +153,11 @@ public class JFeedly {
             con.setRequestProperty("Authorization", "OAuth " + this.connection.getAccessToken());
 
             int responseCode = con.getResponseCode();
-            System.out.println("\nFeeldy GET: " + url);
-            System.out.println("Response Code : " + responseCode);
+
+            if(verbose) {
+                System.out.println("\nFeeldy GET: " + url);
+                System.out.println("Response Code : " + responseCode);
+            }
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -160,8 +169,10 @@ public class JFeedly {
             }
             in.close();
 
-            //print result
-            System.out.println(response.toString());
+            if(verbose) {
+                //print result
+                System.out.println(response.toString());
+            }
 
             return response.toString();
         } catch (MalformedURLException e) {
@@ -185,6 +196,14 @@ public class JFeedly {
 
     public void setOnAuthenticatedListener(OnAuthenticatedListener listener) {
         this.listener = listener;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     public Profile getProfile() {
