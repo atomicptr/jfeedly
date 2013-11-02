@@ -46,15 +46,43 @@ public class JFeedly {
             connection = FeedlyConnection.restoreConnection();
 
             if(connection.isExpired()) {
-                // TODO: refresh connection
-                System.err.println("access token is expired");
+                System.out.println("Tokens are expired. \nRequest new tokens...");
+
+                this.refreshTokens();
             }
         }
     }
 
     private void requestNewTokens(String code) {
+        String apiUrl = "/v3/auth/token/";
+
+        String urlParameters = "code=" + code + "&client_id=" + this.clientId + "&client_secret=" + this.apiSecretKey +
+                "&redirect_uri=http://localhost&grant_type=authorization_code";
+
+        String response = sendPostRequestToFeedly(apiUrl, urlParameters);
+
+        JSONObject object = new JSONObject(response);
+
+        this.connection = FeedlyConnection.newConnection(object);
+    }
+
+    private void refreshTokens() {
+        String apiUrl = "/v3/auth/token/";
+
+        String refreshToken = this.connection.getRefreshToken();
+
+        String urlParameters = "refresh_token=" + refreshToken + "&client_id=" + this.clientId + "&client_secret=" + this.clientId + "&grant_type=refresh_token";
+
+        String response = sendPostRequestToFeedly(apiUrl, urlParameters);
+
+        JSONObject object = new JSONObject(response);
+
+        this.connection.refresh(object);
+    }
+
+    private String sendPostRequestToFeedly(String apiUrl, String urlParameters) {
         try {
-            String url = this.getBaseUrl() + "/v3/auth/token/";
+            String url = this.getBaseUrl() + apiUrl;
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -62,9 +90,6 @@ public class JFeedly {
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", "jfeedly");
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
-            String urlParameters = "code=" + code + "&client_id=sandbox&client_secret=" + this.apiSecretKey +
-                    "&redirect_uri=http://localhost&grant_type=authorization_code";
 
             // Send post request
             con.setDoOutput(true);
@@ -74,7 +99,7 @@ public class JFeedly {
             wr.close();
 
             int responseCode = con.getResponseCode();
-            System.out.println("\nPOST: " + url);
+            System.out.println("\nPOST to: " + url);
             System.out.println("parameters : " + urlParameters);
             System.out.println("\nResponse Code : " + responseCode);
 
@@ -93,12 +118,12 @@ public class JFeedly {
             //print response
             System.out.println(serverResponse);
 
-            JSONObject object = new JSONObject(serverResponse);
-
-            this.connection = FeedlyConnection.newConnection(object);
+            return serverResponse;
         } catch(IOException ex) {
             ex.printStackTrace();
         }
+
+        return null;
     }
 
     private String getAuthenticationUrl() {

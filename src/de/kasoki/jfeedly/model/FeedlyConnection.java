@@ -34,6 +34,24 @@ public class FeedlyConnection {
         return currentDate.after(this.expireDate);
     }
 
+    public String getRefreshToken() {
+        return this.refreshToken;
+    }
+
+    public String getAccessToken() {
+        return this.accessToken;
+    }
+
+    public void refresh(JSONObject object) {
+        this.accessToken = object.getString("access_token");
+        this.id = object.getString("id");
+        this.tokenType = object.getString("token_type");
+        this.plan = object.getString("plan");
+        this.expireDate = FeedlyConnection.getExpireDate(object.getLong("expires_in"));
+
+        this.save();
+    }
+
     public void save() {
         Properties prop = new Properties();
 
@@ -73,11 +91,7 @@ public class FeedlyConnection {
     }
 
     public static FeedlyConnection newConnection(JSONObject object) {
-        Date currentDate = new Date();
-
-        long expiresIn = object.getLong("expires_in");
-
-        Date expireDate = new Date(currentDate.getTime() + (expiresIn * 1000));
+        Date expireDate = FeedlyConnection.getExpireDate(object.getLong("expires_in"));
 
         HashMap<String, String> map = createConnectionHashMap(object.getString("access_token"),
                 object.getString("refresh_token"), object.getString("plan"), object.getString("token_type"),
@@ -88,6 +102,14 @@ public class FeedlyConnection {
         connection.save();
 
         return connection;
+    }
+
+    private static Date getExpireDate(long expiresIn) {
+        Date currentDate = new Date();
+
+        Date expireDate = new Date(currentDate.getTime() + (expiresIn * 1000));
+
+        return expireDate;
     }
 
     private static HashMap<String, String> createConnectionHashMap(String accessToken, String refreshToken,
