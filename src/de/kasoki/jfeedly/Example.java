@@ -1,8 +1,6 @@
 package de.kasoki.jfeedly;
 
-import de.kasoki.jfeedly.model.Categories;
-import de.kasoki.jfeedly.model.Category;
-import de.kasoki.jfeedly.model.Profile;
+import de.kasoki.jfeedly.model.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,6 +20,8 @@ public class Example {
 
         JFeedly feedly = JFeedly.createSandboxHandler(secretApiKey);
 
+        feedly.setVerbose(false);
+
         feedly.authenticate();
 
         // get profile
@@ -36,6 +36,15 @@ public class Example {
 
         for(Category c : categories) {
             System.out.println("* " + c.getLabel());
+        }
+
+        // get subscriptions
+        Subscriptions subscriptions = feedly.getSubscriptions();
+
+        System.out.println("\nThese are your subscriptions:");
+
+        for(Subscription s : subscriptions) {
+            System.out.println("* " + s.getTitle() + " - Categories: " + s.getCategoryIds().size());
         }
     }
 }
