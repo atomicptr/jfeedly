@@ -4,6 +4,7 @@ import de.kasoki.jfeedly.model.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class Example {
@@ -20,7 +21,7 @@ public class Example {
 
         JFeedly feedly = JFeedly.createSandboxHandler(secretApiKey);
 
-        feedly.setVerbose(false);
+        feedly.setVerbose(true);
 
         feedly.authenticate();
 
@@ -46,5 +47,13 @@ public class Example {
         for(Subscription s : subscriptions) {
             System.out.println("* " + s.getTitle() + " - Categories: " + s.getCategoryIds().size());
         }
+
+        ArrayList<Category> cList = new ArrayList<Category>();
+
+        cList.add(categories.get(0));
+        cList.add(categories.get(1));
+        cList.add(categories.get(2));
+
+        feedly.subscribe("http://kasoki.de/rss", "Kasokis Blog", cList);
     }
 }
