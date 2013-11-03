@@ -21,6 +21,20 @@ public class Categories implements Iterable<Category> {
         return categories.size();
     }
 
+    public Category get(int index) {
+        return categories.get(index);
+    }
+
+    public Category getById(String id) {
+        for(Category c : this.categories) {
+            if(c.getCategoryId().equals(id)) {
+                return c;
+            }
+        }
+
+        return null;
+    }
+
     public static Categories fromJSONArray(JSONArray array) {
         ArrayList<Category> categories = new ArrayList<Category>();
 
