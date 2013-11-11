@@ -32,6 +32,7 @@ public class HTTPConnections {
             //add reuqest header
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", "jfeedly");
+            con.setRequestProperty("Content-Type", "application/json");
 
             if(isAuthenticated) {
                 con.setRequestProperty("Authorization", "OAuth " + this.jfeedlyHandler.getConnection().getAccessToken());
@@ -88,6 +89,7 @@ public class HTTPConnections {
             //add request header
             con.setRequestProperty("User-Agent", "jfeedly");
             con.setRequestProperty("Authorization", "OAuth " + this.jfeedlyHandler.getConnection().getAccessToken());
+            con.setRequestProperty("Content-Type", "application/json");
 
             int responseCode = con.getResponseCode();
 
