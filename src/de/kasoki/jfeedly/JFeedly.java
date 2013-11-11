@@ -164,6 +164,20 @@ public class JFeedly {
         return null;
     }
 
+    public Tags getTags() {
+        if(this.connection != null) {
+            String response = httpHelper.sendGetRequestToFeedly("/v3/tags/");
+
+            JSONArray array = new JSONArray(response);
+
+            return Tags.fromJSONArray(array);
+        } else {
+            System.err.println("JFeedly: Connection required to do this...\n\nCall jfeedlyInstance.authenticate();");
+        }
+
+        return null;
+    }
+
     public void subscribe(String feedUrl, String title, List<Category> categories) {
         if(this.connection != null) {
             JSONObject object = new JSONObject();

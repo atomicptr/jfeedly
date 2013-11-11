@@ -54,6 +54,14 @@ public class Example {
             //s.setTitle("OH MAI GOSH");
             //s.update(feedly);
 
+            // get tags
+            Tags tags = feedly.getTags();
+
+            System.out.println("\nTags:");
+
+            for(Tag t : tags) {
+                System.out.println("* " + t.getId() + (t.getLabel() != null ? ", Label: " + t.getLabel() : ""));
+            }
         }
     };
 
