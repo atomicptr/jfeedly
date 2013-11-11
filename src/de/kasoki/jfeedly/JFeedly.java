@@ -234,6 +234,14 @@ public class JFeedly {
         }
     }
 
+    public void deleteSubscription(Subscription subscription) {
+        String feedId = subscription.getId();
+
+        httpHelper.sendDeleteRequestToFeedly("/v3/subscriptions/" + feedId);
+
+        System.err.println("jfeedly: deleting subscriptions seems not to work at the moment :(");
+    }
+
     public String searchFeeds(String query) {
         return this.searchFeeds(query, 20);
     }
@@ -252,7 +260,7 @@ public class JFeedly {
     public Entries getEntries(int number) {
         Profile profile = this.getProfile();
 
-        return this.getEntriesFor("user/" + profile.getId() + "/category/global.all", true, true, number);
+        return this.getEntriesFor(Category.getGlobalAllCategory(profile).getCategoryId(), true, true, number);
     }
 
     public Entries getEntriesFor(Category category) {
@@ -270,14 +278,6 @@ public class JFeedly {
         String response = httpHelper.sendPostRequestToFeedly("/v3/entries/.mget", entryIdResponse, true);
 
         return Entries.fromJSONArray(new JSONArray(response));
-    }
-
-    public void deleteSubscription(Subscription subscription) {
-        String feedId = subscription.getId();
-
-        httpHelper.sendDeleteRequestToFeedly("/v3/subscriptions/" + feedId);
-
-        System.err.println("jfeedly: deleting subscriptions seems not to work at the moment :(");
     }
 
     public static JFeedly createSandboxHandler(String apiSecretKey) {

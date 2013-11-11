@@ -24,4 +24,8 @@ public class Category {
         return new Category(object.getString("id"), object.getString("label"));
     }
 
+    public static Category getGlobalAllCategory(Profile userProfile) {
+        return new Category("user/" + userProfile.getId() + "/category/global.all", "All");
+    }
+
 }
