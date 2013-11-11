@@ -1,5 +1,6 @@
 package de.kasoki.jfeedly.model;
 
+import de.kasoki.jfeedly.JFeedly;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -31,6 +32,10 @@ public class Subscription {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public double getVelocity() {
         return velocity;
     }
@@ -45,6 +50,30 @@ public class Subscription {
 
     public ArrayList<String> getCategoryIds() {
         return this.categoryIds;
+    }
+
+    public void addCategory(Category category) {
+        this.categoryIds.add(category.getCategoryId());
+    }
+
+    public void removeCategory(Category category) {
+        this.categoryIds.remove(category.getCategoryId());
+    }
+
+    public void update(JFeedly handler) {
+        Categories userCategories = handler.getCategories();
+
+        ArrayList<Category> categories = new ArrayList<Category>();
+
+        for(String categoryId : this.categoryIds) {
+            categories.add(userCategories.getById(categoryId));
+        }
+
+        handler.updateSubscription(this, categories);
+    }
+
+    public void delete(JFeedly handler) {
+        handler.deleteSubscription(this);
     }
 
     public static Subscription fromJSONObject(JSONObject object) {

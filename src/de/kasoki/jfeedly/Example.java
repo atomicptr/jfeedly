@@ -44,7 +44,16 @@ public class Example {
             cList.add(categories.get(1));
             cList.add(categories.get(2));
 
+            // get first subscription
+            Subscription s = subscriptions.get(0);
+
+            // add subscription
             //feedly.subscribe("http://kasoki.de/rss", "Kasokis Blog", cList);
+
+            // update subscription
+            //s.setTitle("OH MAI GOSH");
+            //s.update(feedly);
+
         }
     };
 

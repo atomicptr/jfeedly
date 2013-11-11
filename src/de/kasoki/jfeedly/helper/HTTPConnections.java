@@ -78,7 +78,7 @@ public class HTTPConnections {
         return null;
     }
 
-    public String sendGetRequestToFeedly(String apiUrl, String urlParameters) {
+    public String sendGetRequestToFeedly(String apiUrl) {
         try {
             String url = this.jfeedlyHandler.getBaseUrl() + apiUrl;
             URL obj = new URL(url);
@@ -95,6 +95,54 @@ public class HTTPConnections {
 
             if(jfeedlyHandler.getVerbose()) {
                 System.out.println("\nFeeldy GET: " + url);
+                System.out.println("Response Code : " + responseCode);
+            }
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            if(jfeedlyHandler.getVerbose()) {
+                //print result
+                System.out.println(response.toString());
+            }
+
+            return response.toString();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public String sendDeleteRequestToFeedly(String apiUrl) {
+        try {
+            String url = this.jfeedlyHandler.getBaseUrl() + apiUrl;
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("DELETE");
+
+            //add request header
+            con.setRequestProperty("User-Agent", "jfeedly");
+            con.setRequestProperty("Authorization", "OAuth " + this.jfeedlyHandler.getConnection().getAccessToken());
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            con.setDoOutput(true);
+
+            int responseCode = con.getResponseCode();
+
+            if(jfeedlyHandler.getVerbose()) {
+                System.out.println("\nFeeldy DELETE: " + url);
                 System.out.println("Response Code : " + responseCode);
             }
 

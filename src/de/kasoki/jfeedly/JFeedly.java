@@ -7,6 +7,7 @@ import de.kasoki.jfeedly.model.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class JFeedly {
 
     public Profile getProfile() {
         if(this.connection != null) {
-            String response = httpHelper.sendGetRequestToFeedly("/v3/profile/", "");
+            String response = httpHelper.sendGetRequestToFeedly("/v3/profile/");
 
             JSONObject object = new JSONObject(response);
 
@@ -137,7 +138,7 @@ public class JFeedly {
 
     public Categories getCategories() {
         if(this.connection != null) {
-            String response = httpHelper.sendGetRequestToFeedly("/v3/categories/", "");
+            String response = httpHelper.sendGetRequestToFeedly("/v3/categories/");
 
             JSONArray array = new JSONArray(response);
 
@@ -151,7 +152,7 @@ public class JFeedly {
 
     public Subscriptions getSubscriptions() {
         if(this.connection != null) {
-            String response = httpHelper.sendGetRequestToFeedly("/v3/subscriptions/", "");
+            String response = httpHelper.sendGetRequestToFeedly("/v3/subscriptions/");
 
             JSONArray array = new JSONArray(response);
 
@@ -189,6 +190,42 @@ public class JFeedly {
         } else {
             System.err.println("JFeedly: Connection required to do this...\n\nCall jfeedlyInstance.authenticate();");
         }
+    }
+
+    public void updateSubscription(Subscription subscription, ArrayList<Category> categories) {
+        if(this.connection != null) {
+            JSONObject object = new JSONObject();
+
+            object.put("id", subscription.getId());
+            object.put("title", subscription.getTitle());
+
+            JSONArray categoriesArray = new JSONArray();
+
+            for(Category c : categories) {
+                HashMap<String, String> category = new HashMap<String, String>();
+
+                category.put("id", c.getCategoryId());
+                category.put("label", c.getLabel());
+
+                categoriesArray.put(category);
+            }
+
+            object.put("categories", categoriesArray);
+
+            String input = object.toString();
+
+            httpHelper.sendPostRequestToFeedly("/v3/subscriptions/", input, true);
+        } else {
+            System.err.println("JFeedly: Connection required to do this...\n\nCall jfeedlyInstance.authenticate();");
+        }
+    }
+
+    public void deleteSubscription(Subscription subscription) {
+        String feedId = subscription.getId();
+
+        httpHelper.sendDeleteRequestToFeedly("/v3/subscriptions/" + feedId);
+
+        System.err.println("jfeedly: deleting subscriptions seems not to work at the moment :(");
     }
 
     public static JFeedly createSandboxHandler(String apiSecretKey) {
