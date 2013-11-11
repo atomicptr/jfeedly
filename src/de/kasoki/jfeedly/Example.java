@@ -62,6 +62,9 @@ public class Example {
             for(Tag t : tags) {
                 System.out.println("* " + t.getId() + (t.getLabel() != null ? ", Label: " + t.getLabel() : ""));
             }
+
+            // search
+            System.out.println(feedly.searchFeeds("kasoki"));
         }
     };
 

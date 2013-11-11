@@ -234,6 +234,17 @@ public class JFeedly {
         }
     }
 
+    public String searchFeeds(String query) {
+        return this.searchFeeds(query, 20);
+    }
+
+    public String searchFeeds(String query, int numberOfFeeds) {
+        String response = httpHelper.sendGetRequestToFeedly("/v3/search/feeds/?q=" + query + "&n=" + numberOfFeeds);
+
+        // TODO: add entries
+        return response;
+    }
+
     public void deleteSubscription(Subscription subscription) {
         String feedId = subscription.getId();
 
