@@ -65,6 +65,16 @@ public class Example {
 
             // search
             System.out.println(feedly.searchFeeds("kasoki"));
+
+            // get all entries
+
+            System.out.println("\nEntries:");
+
+            Entries entries = feedly.getEntries(20);
+
+            for(Entry entry : entries) {
+                System.out.println("* " + entry.getTitle() + " by " + entry.getAuthor());
+            }
         }
     };
 

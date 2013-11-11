@@ -245,6 +245,33 @@ public class JFeedly {
         return response;
     }
 
+    public Entries getEntries() {
+        return this.getEntries(10000);
+    }
+
+    public Entries getEntries(int number) {
+        Profile profile = this.getProfile();
+
+        return this.getEntriesFor("user/" + profile.getId() + "/category/global.all", true, true, number);
+    }
+
+    public Entries getEntriesFor(Category category) {
+        return this.getEntriesFor(category.getCategoryId(), true, true, 10000);
+    }
+
+    public Entries getEntriesFor(Category category, boolean unreadOnly) {
+        return this.getEntriesFor(category.getCategoryId(), unreadOnly, true, 10000);
+    }
+
+    public Entries getEntriesFor(String categoryId, boolean unreadOnly, boolean showNewest, int number) {
+        String entryIdResponse = httpHelper.sendGetRequestToFeedly("/v3/streams/ids?streamId=" + categoryId +
+            "&unreadOnly=true&count=" + number + "&ranked=" + (showNewest ? "newest" : "oldest"));
+
+        String response = httpHelper.sendPostRequestToFeedly("/v3/entries/.mget", entryIdResponse, true);
+
+        return Entries.fromJSONArray(new JSONArray(response));
+    }
+
     public void deleteSubscription(Subscription subscription) {
         String feedId = subscription.getId();
 
