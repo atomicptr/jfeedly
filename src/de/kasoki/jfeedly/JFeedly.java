@@ -52,11 +52,9 @@ public class JFeedly {
                 System.out.println("Tokens are expired. \nRequest new tokens...");
 
                 this.refreshTokens();
+            } else {
+                this.onAuthenticated();
             }
-        }
-
-        if(listener != null) {
-            listener.onAuthenticated();
         }
     }
 
@@ -71,6 +69,7 @@ public class JFeedly {
         JSONObject object = new JSONObject(response);
 
         this.connection = FeedlyConnection.newConnection(object);
+        this.onAuthenticated();
     }
 
     private void refreshTokens() {
@@ -85,6 +84,13 @@ public class JFeedly {
         JSONObject object = new JSONObject(response);
 
         this.connection.refresh(object);
+        this.onAuthenticated();
+    }
+
+    private void onAuthenticated() {
+        if(listener != null) {
+            listener.onAuthenticated(JFeedly.this);
+        }
     }
 
     private String getAuthenticationUrl() {
