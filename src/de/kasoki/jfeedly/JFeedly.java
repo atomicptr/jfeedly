@@ -13,7 +13,7 @@ import java.util.List;
 
 public class JFeedly {
 
-    private String appName = "JFeedly";
+    private String appName = "jfeedly";
     private boolean verbose = false;
 
     private FeedlyConnection connection;
@@ -27,7 +27,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 11;
+    private static final int PATCH_VERSION = 12;
 
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
@@ -308,12 +308,28 @@ public class JFeedly {
         return this.getEntriesFor(category.getCategoryId(), true, true, 10000);
     }
 
+    public Entries getEntriesFor(Feed feed) {
+        return this.getEntriesFor(feed.getId(), true, true, 10000);
+    }
+
+    public Entries getEntriesFor(Feed feed, boolean unreadOnly) {
+        return this.getEntriesFor(feed.getId(), unreadOnly, true, 10000);
+    }
+
+    public Entries getEntriesFor(Subscription subscription) {
+        return this.getEntriesFor(subscription.getId(), true, true, 10000);
+    }
+
+    public Entries getEntriesFor(Subscription subscription, boolean unreadOnly) {
+        return this.getEntriesFor(subscription.getId(), unreadOnly, true, 10000);
+    }
+
     public Entries getEntriesFor(Category category, boolean unreadOnly) {
         return this.getEntriesFor(category.getCategoryId(), unreadOnly, true, 10000);
     }
 
-    public Entries getEntriesFor(String categoryId, boolean unreadOnly, boolean showNewest, int number) {
-        String entryIdResponse = httpHelper.sendGetRequestToFeedly("/v3/streams/ids?streamId=" + categoryId +
+    public Entries getEntriesFor(String id, boolean unreadOnly, boolean showNewest, int number) {
+        String entryIdResponse = httpHelper.sendGetRequestToFeedly("/v3/streams/ids?streamId=" + id +
             "&unreadOnly=" + unreadOnly + "&count=" + number + "&ranked=" + (showNewest ? "newest" : "oldest"));
 
         String response = httpHelper.sendPostRequestToFeedly("/v3/entries/.mget", entryIdResponse, true);
@@ -367,23 +383,27 @@ public class JFeedly {
         return unreadCount;
     }
 
+    public void markEverythingAsRead() {
+        this.markAsRead(Category.getGlobalAllCategory(getProfile()));
+    }
+
     public void markAsRead(Entry entry) {
-        this.markAsRead(entry.getId(), "entries");
+        this.markAsRead(entry.getId(), "entries", null);
     }
 
     public void markAsRead(Subscription subscription) {
-        this.markAsRead(subscription.getId(), "feeds");
+        this.markAsRead(subscription.getId(), "feeds", subscription.getNewestEntry(this));
     }
 
     public void markAsRead(Feed feed) {
-        this.markAsRead(feed.getId(), "feeds");
+        this.markAsRead(feed.getId(), "feeds", feed.getNewestEntry(this));
     }
 
     public void markAsRead(Category category) {
-        this.markAsRead(category.getCategoryId(), "categories");
+        this.markAsRead(category.getCategoryId(), "categories", category.getNewestEntry(this));
     }
 
-    private void markAsRead(String id, String type) {
+    private void markAsRead(String id, String type, Entry newestEntry) {
         JSONObject object = new JSONObject();
 
         object.put("action", "markAsRead");
@@ -407,10 +427,9 @@ public class JFeedly {
 
         object.put(typeIdIdentificator, ids);
 
-        // TODO: get id of last read entry (or this might mark unread but not pulled articles as read)
-        /*if(!type.equals("entries")) {
-            object.put("lastReadEntryId", lastReadEntryId);
-        }*/
+        if(!type.equals("entries") && newestEntry != null) {
+            object.put("lastReadEntryId", newestEntry.getId());
+        }
 
         httpHelper.sendPostRequestToFeedly("/v3/markers", object.toString(), true);
     }

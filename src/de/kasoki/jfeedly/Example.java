@@ -91,14 +91,14 @@ public class Example {
             System.out.println(subscriptions.get(0).getTitle() + ": " +
                     feedly.getCountOfUnreadArticles(subscriptions.get(0)));
 
-            // mark subscription 0 as read
-            subscriptions.get(0).markAsRead(feedly);
+            // mark category 1 as read
+            categories.get(1).markAsRead(feedly);
 
             // get OPML subscriptions
             System.out.println(feedly.exportOPML());
 
             // search in feeds (pro required)
-            feedly.searchInFeeds(entries.get(0).getId(), "a");
+            System.out.println(feedly.searchInFeeds(entries.get(0).getId(), "a"));
         }
     };
 
