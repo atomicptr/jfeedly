@@ -54,7 +54,7 @@ public class HTTPConnections {
     private String sendRequest(String apiUrl, String parameters, boolean isAuthenticated, RequestType type,
                                String contentType) {
         try {
-            String url = this.jfeedlyHandler.getBaseUrl() + apiUrl;
+            String url = this.jfeedlyHandler.getBaseUrl() + apiUrl.replaceAll(" ", "%20");
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
