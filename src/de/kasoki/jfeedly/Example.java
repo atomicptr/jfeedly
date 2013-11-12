@@ -82,6 +82,14 @@ public class Example {
             for(Entry entry : entries) {
                 System.out.println("* " + entry.getTitle() + " by " + entry.getAuthor());
             }
+
+            // get count of all unread articles
+            System.out.println("Number of all unread articles: " +
+                    feedly.getCountOfUnreadArticles(Category.getGlobalAllCategory(profile)));
+
+            // get count of unread articles from subscription 0
+            System.out.println(subscriptions.get(0).getTitle() + ": " +
+                    feedly.getCountOfUnreadArticles(subscriptions.get(0)));;
         }
     };
 
@@ -98,7 +106,7 @@ public class Example {
 
         JFeedly feedly = JFeedly.createSandboxHandler(secretApiKey);
 
-        feedly.setVerbose(true);
+        feedly.setVerbose(false);
 
         feedly.setOnAuthenticatedListener(listener);
 

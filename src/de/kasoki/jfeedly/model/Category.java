@@ -1,5 +1,6 @@
 package de.kasoki.jfeedly.model;
 
+import de.kasoki.jfeedly.JFeedly;
 import org.json.JSONObject;
 
 public class Category {
@@ -18,6 +19,10 @@ public class Category {
 
     public String getLabel() {
         return label;
+    }
+
+    public int getNumberOfUnreadArticles(JFeedly handler) {
+        return handler.getCountOfUnreadArticles(this);
     }
 
     public static Category fromJSONObject(JSONObject object) {

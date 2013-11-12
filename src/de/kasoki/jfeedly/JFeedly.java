@@ -309,6 +309,42 @@ public class JFeedly {
         return Feed.fromJSONObject(object);
     }
 
+    public int getCountOfUnreadArticles(Category category) {
+        return this.getCountOfUnreadArticles(category.getCategoryId());
+    }
+
+    public int getCountOfUnreadArticles(Subscription subscription) {
+        return this.getCountOfUnreadArticles(subscription.getId());
+    }
+
+    private int getCountOfUnreadArticles(String id) {
+        String response = httpHelper.sendGetRequestToFeedly("/v3/markers/counts");
+
+        JSONObject object = new JSONObject(response);
+
+        JSONArray unreadcounts = object.getJSONArray("unreadcounts");
+
+        int unreadCount = -1;
+
+        for(int i = 0; i < unreadcounts.length(); i++) {
+            JSONObject unread = unreadcounts.getJSONObject(i);
+
+            String unreadId = unread.getString("id");
+
+            if(id.equals(unreadId)) {
+                unreadCount = unread.getInt("count");
+
+                break;
+            }
+        }
+
+        if(unreadCount == -1) {
+            System.err.println("Unkown id: " + id);
+        }
+
+        return unreadCount;
+    }
+
     public static JFeedly createSandboxHandler(String apiSecretKey) {
         return new JFeedly("sandbox", "sandbox", apiSecretKey);
     }

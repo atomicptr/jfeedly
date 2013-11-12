@@ -76,6 +76,10 @@ public class Subscription {
         handler.deleteSubscription(this);
     }
 
+    public int getNumberOfUnreadArticles(JFeedly handler) {
+        return handler.getCountOfUnreadArticles(this);
+    }
+
     public static Subscription fromJSONObject(JSONObject object) {
         Date updatedDate = new Date(object.getLong("updated"));
 
