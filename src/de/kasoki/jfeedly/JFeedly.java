@@ -27,7 +27,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 7;
+    private static final int PATCH_VERSION = 8;
 
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
@@ -292,7 +292,7 @@ public class JFeedly {
 
     public Entries getEntriesFor(String categoryId, boolean unreadOnly, boolean showNewest, int number) {
         String entryIdResponse = httpHelper.sendGetRequestToFeedly("/v3/streams/ids?streamId=" + categoryId +
-            "&unreadOnly=true&count=" + number + "&ranked=" + (showNewest ? "newest" : "oldest"));
+            "&unreadOnly=" + unreadOnly + "&count=" + number + "&ranked=" + (showNewest ? "newest" : "oldest"));
 
         String response = httpHelper.sendPostRequestToFeedly("/v3/entries/.mget", entryIdResponse, true);
 
