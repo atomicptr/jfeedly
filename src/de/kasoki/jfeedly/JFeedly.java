@@ -25,6 +25,10 @@ public class JFeedly {
     private OnAuthenticatedListener listener = null;
     private HTTPConnections httpHelper;
 
+    private static final int MAJOR_VERSION = 0;
+    private static final int MINOR_VERSION = 0;
+    private static final int PATCH_VERSION = 7;
+
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
         this.clientId = clientId;
@@ -34,6 +38,10 @@ public class JFeedly {
     }
 
     public void authenticate() {
+        if(this.getVerbose()) {
+            System.out.println("jfeedly v" + JFeedly.getVersion() + ": try to authenticate...");
+        }
+
         if(!FeedlyConnection.oldConnectionExists()) {
             String authUrl = this.getAuthenticationUrl();
             BrowserFrame frame = new BrowserFrame(appName + " Authenticate", authUrl);
@@ -307,5 +315,9 @@ public class JFeedly {
 
     public static JFeedly createHandler(String clientId, String apiSecretKey) {
         return new JFeedly("cloud", clientId, apiSecretKey);
+    }
+
+    public static String getVersion() {
+        return MAJOR_VERSION + "." + MINOR_VERSION + "." + PATCH_VERSION;
     }
 }
