@@ -386,8 +386,9 @@ public class JFeedly {
 
         object.put(typeIdIdentificator, ids);
 
+        // TODO: get id of last read entry (or this might mark unread but not pulled articles as read)
         /*if(!type.equals("entries")) {
-            object.put("asOf", "");
+            object.put("lastReadEntryId", lastReadEntryId);
         }*/
 
         httpHelper.sendPostRequestToFeedly("/v3/markers", object.toString(), true);
