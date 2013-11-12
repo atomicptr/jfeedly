@@ -89,7 +89,10 @@ public class Example {
 
             // get count of unread articles from subscription 0
             System.out.println(subscriptions.get(0).getTitle() + ": " +
-                    feedly.getCountOfUnreadArticles(subscriptions.get(0)));;
+                    feedly.getCountOfUnreadArticles(subscriptions.get(0)));
+
+            // mark subscription 0 as read
+            subscriptions.get(0).markAsRead(feedly);
         }
     };
 
@@ -106,7 +109,7 @@ public class Example {
 
         JFeedly feedly = JFeedly.createSandboxHandler(secretApiKey);
 
-        feedly.setVerbose(false);
+        feedly.setVerbose(true);
 
         feedly.setOnAuthenticatedListener(listener);
 

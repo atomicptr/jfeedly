@@ -1,5 +1,6 @@
 package de.kasoki.jfeedly.model;
 
+import de.kasoki.jfeedly.JFeedly;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -112,6 +113,10 @@ public class Entry {
 
     public ArrayList<String> getCategoryIds() {
         return categoryIds;
+    }
+
+    public void markAsRead(JFeedly handler) {
+        handler.markAsRead(this);
     }
 
     public static Entry fromJSONObject(JSONObject object) {

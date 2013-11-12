@@ -25,6 +25,10 @@ public class Category {
         return handler.getCountOfUnreadArticles(this);
     }
 
+    public void markAsRead(JFeedly handler) {
+        handler.markAsRead(this);
+    }
+
     public static Category fromJSONObject(JSONObject object) {
         return new Category(object.getString("id"), object.getString("label"));
     }

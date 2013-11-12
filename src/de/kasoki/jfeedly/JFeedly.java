@@ -27,7 +27,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 8;
+    private static final int PATCH_VERSION = 9;
 
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
@@ -103,7 +103,8 @@ public class JFeedly {
     }
 
     private String getAuthenticationUrl() {
-        return this.getBaseUrl() + "/v3/auth/auth?response_type=code&client_id=" + this.clientId + "&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions";
+        return this.getBaseUrl() + "/v3/auth/auth?response_type=code&client_id=" + this.clientId +
+                "&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions";
     }
 
     public String getBaseUrl() {
@@ -343,6 +344,53 @@ public class JFeedly {
         }
 
         return unreadCount;
+    }
+
+    public void markAsRead(Entry entry) {
+        this.markAsRead(entry.getId(), "entries");
+    }
+
+    public void markAsRead(Subscription subscription) {
+        this.markAsRead(subscription.getId(), "feeds");
+    }
+
+    public void markAsRead(Feed feed) {
+        this.markAsRead(feed.getId(), "feeds");
+    }
+
+    public void markAsRead(Category category) {
+        this.markAsRead(category.getCategoryId(), "categories");
+    }
+
+    private void markAsRead(String id, String type) {
+        JSONObject object = new JSONObject();
+
+        object.put("action", "markAsRead");
+
+        object.put("type", type);
+
+        JSONArray ids = new JSONArray();
+        ids.put(id);
+
+        String typeIdIdentificator = null;
+
+        if(type.equals("entries")) {
+            typeIdIdentificator = "entryIds";
+        } else if(type.equals("feeds")) {
+            typeIdIdentificator = "feedIds";
+        } else if(type.equals("categories")) {
+            typeIdIdentificator = "categoryIds";
+        } else {
+            System.err.println("jfeedly: Unknown type: " + type + " don't know what to do with this.");
+        }
+
+        object.put(typeIdIdentificator, ids);
+
+        /*if(!type.equals("entries")) {
+            object.put("asOf", "");
+        }*/
+
+        httpHelper.sendPostRequestToFeedly("/v3/markers", object.toString(), true);
     }
 
     public static JFeedly createSandboxHandler(String apiSecretKey) {

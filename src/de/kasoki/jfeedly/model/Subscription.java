@@ -80,6 +80,10 @@ public class Subscription {
         return handler.getCountOfUnreadArticles(this);
     }
 
+    public void markAsRead(JFeedly handler) {
+        handler.markAsRead(this);
+    }
+
     public static Subscription fromJSONObject(JSONObject object) {
         Date updatedDate = new Date(object.getLong("updated"));
 
