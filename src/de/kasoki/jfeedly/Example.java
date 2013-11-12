@@ -93,6 +93,9 @@ public class Example {
 
             // mark subscription 0 as read
             subscriptions.get(0).markAsRead(feedly);
+
+            // get OPML subscriptions
+            System.out.println(feedly.exportOPML());
         }
     };
 

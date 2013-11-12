@@ -394,6 +394,14 @@ public class JFeedly {
         httpHelper.sendPostRequestToFeedly("/v3/markers", object.toString(), true);
     }
 
+    public String exportOPML() {
+        return httpHelper.sendGetRequestToFeedly("/v3/opml");
+    }
+
+    public void importOPML(String opmlString) {
+        httpHelper.sendPostRequestToFeedly("/v3/markers", opmlString, true, "application/xml");
+    }
+
     public static JFeedly createSandboxHandler(String apiSecretKey) {
         return new JFeedly("sandbox", "sandbox", apiSecretKey);
     }
