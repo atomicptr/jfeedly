@@ -123,7 +123,7 @@ public class Entry {
         String id = object.getString("id");
         String fingerprint = object.getString("fingerprint");
         String originId = object.getJSONObject("origin").getString("streamId");
-        String author = object.getString("author");
+        String author = object.has("author") ? object.getString("author") : "None";
         Date crawled = new Date(object.getLong("crawled"));
         String title = object.getString("title");
 
