@@ -242,15 +242,26 @@ public class JFeedly {
         System.err.println("jfeedly: deleting subscriptions seems not to work at the moment :(");
     }
 
-    public String searchFeeds(String query) {
+    public ArrayList<Feed> searchFeeds(String query) {
         return this.searchFeeds(query, 20);
     }
 
-    public String searchFeeds(String query, int numberOfFeeds) {
+    public ArrayList<Feed> searchFeeds(String query, int numberOfFeeds) {
         String response = httpHelper.sendGetRequestToFeedly("/v3/search/feeds/?q=" + query + "&n=" + numberOfFeeds);
 
-        // TODO: add entries
-        return response;
+        JSONObject searchResult = new JSONObject(response);
+
+        JSONArray results = searchResult.getJSONArray("results");
+
+        ArrayList<Feed> feeds = new ArrayList<Feed>();
+
+        for(int i = 0; i < results.length(); i++) {
+            JSONObject result = results.getJSONObject(i);
+
+            feeds.add(this.getFeedById(result.getString("feedId")));
+        }
+
+        return feeds;
     }
 
     public Entries getEntries() {
@@ -278,6 +289,16 @@ public class JFeedly {
         String response = httpHelper.sendPostRequestToFeedly("/v3/entries/.mget", entryIdResponse, true);
 
         return Entries.fromJSONArray(new JSONArray(response));
+    }
+
+    public Feed getFeedById(String feedId) {
+        String response = httpHelper.sendPostRequestToFeedly("/v3/feeds/.mget", "[ \"" + feedId + "\" ]", true);
+
+        JSONArray objects = new JSONArray(response);
+
+        JSONObject object = objects.getJSONObject(0);
+
+        return Feed.fromJSONObject(object);
     }
 
     public static JFeedly createSandboxHandler(String apiSecretKey) {

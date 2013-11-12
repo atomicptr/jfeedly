@@ -64,7 +64,14 @@ public class Example {
             }
 
             // search
-            System.out.println(feedly.searchFeeds("kasoki"));
+            ArrayList<Feed> feeds = feedly.searchFeeds("android");
+
+            System.out.println("\nFeeds:");
+
+            for(Feed f : feeds) {
+                System.out.println("* " + f.getTitle() + " (" + f.getDescription() + ") Num: " +
+                        f.getNumberOfSubscribers());
+            }
 
             // get all entries
 
