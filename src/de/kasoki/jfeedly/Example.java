@@ -96,6 +96,9 @@ public class Example {
 
             // get OPML subscriptions
             System.out.println(feedly.exportOPML());
+
+            // search in feeds (pro required)
+            feedly.searchInFeeds(entries.get(0).getId(), "a");
         }
     };
 

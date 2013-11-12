@@ -1,5 +1,6 @@
 package de.kasoki.jfeedly.model;
 
+import de.kasoki.jfeedly.JFeedly;
 import org.json.JSONObject;
 
 public class Feed {
@@ -49,6 +50,10 @@ public class Feed {
 
     public int getNumberOfSubscribers() {
         return subscribers;
+    }
+
+    public void markAsRead(JFeedly handler) {
+        handler.markAsRead(this);
     }
 
     public static Feed fromJSONObject(JSONObject object) {

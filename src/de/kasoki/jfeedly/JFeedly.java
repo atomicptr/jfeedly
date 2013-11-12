@@ -27,7 +27,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 10;
+    private static final int PATCH_VERSION = 11;
 
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
@@ -129,6 +129,16 @@ public class JFeedly {
 
     public boolean getVerbose() {
         return this.verbose;
+    }
+
+    public boolean isPro() {
+        if(this.connection != null) {
+            return this.connection.getPlan().equals("pro");
+        } else {
+            System.err.println("JFeedly: Connection required to do this...\n\nCall jfeedlyInstance.authenticate();");
+        }
+
+        return false;
     }
 
     public Profile getProfile() {
@@ -271,6 +281,17 @@ public class JFeedly {
         }
 
         return feeds;
+    }
+
+    public String searchInFeeds(String feedId, String query) {
+        if(isPro()) {
+            String response = httpHelper.sendGetRequestToFeedly("/v3/streams/contents?streamId=" + feedId +
+                    "&q=" + query);
+
+            return response;
+        } else {
+            return "{\"error\": \"Pro required\"}";
+        }
     }
 
     public Entries getEntries() {

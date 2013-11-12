@@ -42,6 +42,10 @@ public class FeedlyConnection {
         return this.accessToken;
     }
 
+    public String getPlan() {
+        return this.plan;
+    }
+
     public void refresh(JSONObject object) {
         this.accessToken = object.getString("access_token");
         this.id = object.getString("id");
