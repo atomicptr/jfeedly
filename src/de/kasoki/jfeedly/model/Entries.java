@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class Entries implements Iterable<Entry> {
@@ -33,6 +34,14 @@ public class Entries implements Iterable<Entry> {
         }
 
         return null;
+    }
+
+    public void sortByDateOldestFirst() {
+        Collections.sort(entries);
+    }
+
+    public void sortByDateNewestFirst() {
+        Collections.sort(entries, Collections.reverseOrder());
     }
 
     public static Entries fromJSONArray(JSONArray array) {

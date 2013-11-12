@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Entry {
+public class Entry implements Comparable<Entry> {
 
     private String id;
     private String fingerprint;
@@ -166,5 +166,10 @@ public class Entry {
         return new Entry(id, fingerprint, originId, author, crawled, title,
                 summaryContent, summaryDirection, published, visualUrl, visualWidth,
                 visualHeight, visualContentType, unread, categoryIds);
+    }
+
+    @Override
+    public int compareTo(Entry otherEntry) {
+        return this.getPublishedDate().compareTo(otherEntry.getPublishedDate());
     }
 }
