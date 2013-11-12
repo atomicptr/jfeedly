@@ -56,6 +56,34 @@ public class Feed {
         handler.markAsRead(this);
     }
 
+    public Entries getEntries(JFeedly handler) {
+        return handler.getEntriesFor(this);
+    }
+
+    public Entry getNewestEntry(JFeedly handler) {
+        Entries entries = this.getEntries(handler);
+
+        entries.sortByDateNewestFirst();
+
+        if(entries.getNumberOfEntries() > 0) {
+            return entries.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public Entry getOldestEntry(JFeedly handler) {
+        Entries entries = this.getEntries(handler);
+
+        entries.sortByDateOldestFirst();
+
+        if(entries.getNumberOfEntries() > 0) {
+            return entries.get(0);
+        } else {
+            return null;
+        }
+    }
+
     public static Feed fromJSONObject(JSONObject object) {
         String id = object.getString("id");
         String title = object.getString("title");

@@ -84,6 +84,34 @@ public class Subscription {
         handler.markAsRead(this);
     }
 
+    public Entries getEntries(JFeedly handler) {
+        return handler.getEntriesFor(this);
+    }
+
+    public Entry getNewestEntry(JFeedly handler) {
+        Entries entries = this.getEntries(handler);
+
+        entries.sortByDateNewestFirst();
+
+        if(entries.getNumberOfEntries() > 0) {
+            return entries.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public Entry getOldestEntry(JFeedly handler) {
+        Entries entries = this.getEntries(handler);
+
+        entries.sortByDateOldestFirst();
+
+        if(entries.getNumberOfEntries() > 0) {
+            return entries.get(0);
+        } else {
+            return null;
+        }
+    }
+
     public static Subscription fromJSONObject(JSONObject object) {
         Date updatedDate = new Date(object.getLong("updated"));
 
