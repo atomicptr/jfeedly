@@ -27,7 +27,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 9;
+    private static final int PATCH_VERSION = 10;
 
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
