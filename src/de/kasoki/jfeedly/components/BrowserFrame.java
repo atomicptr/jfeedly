@@ -107,6 +107,12 @@ public class BrowserFrame extends JFrame {
                         // dispose window
                         BrowserFrame.this.setVisible(false);
                     }
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };

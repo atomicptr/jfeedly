@@ -113,7 +113,10 @@ public class HTTPConnections {
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
             con.setRequestProperty("User-Agent", "jfeedly");
-            con.setRequestProperty("Content-Type", contentType);
+
+            if(!contentType.isEmpty()) {
+                con.setRequestProperty("Content-Type", contentType);
+            }
 
             if(isAuthenticated) {
                 con.setRequestProperty("Authorization", "OAuth " + this.jfeedlyHandler.getConnection().getAccessToken());

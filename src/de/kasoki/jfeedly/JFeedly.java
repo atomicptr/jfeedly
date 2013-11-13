@@ -46,7 +46,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 14;
+    private static final int PATCH_VERSION = 15;
 
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
@@ -93,7 +93,7 @@ public class JFeedly {
         String urlParameters = "code=" + code + "&client_id=" + this.clientId + "&client_secret=" + this.apiSecretKey +
                 "&redirect_uri=http://localhost&grant_type=authorization_code";
 
-        String response = httpHelper.sendPostRequestToFeedly(apiUrl, urlParameters);
+        String response = httpHelper.sendPostRequestToFeedly(apiUrl, urlParameters, false, "");
 
         JSONObject object = new JSONObject(response);
 
