@@ -27,6 +27,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Helper class for HTTP connections
+ * @author Christopher Kaster
+ */
 public class HTTPConnections {
 
     private JFeedly jfeedlyHandler;
@@ -37,27 +41,62 @@ public class HTTPConnections {
         DELETE
     };
 
+    /**
+     * Create a new HTTP connections helper for the given handler
+     * @param feedly jfeedly handler
+     */
     public HTTPConnections(JFeedly feedly) {
         this.jfeedlyHandler = feedly;
     }
 
+    /**
+     * Send a POST request to the feedly servers
+     * @param apiUrl the API url, usually starts with "/v3/...."
+     * @param urlParameters this field is used for parameters and body
+     * @return The response from the server, usually a JSON String
+     */
     public String sendPostRequestToFeedly(String apiUrl, String urlParameters) {
         return this.sendPostRequestToFeedly(apiUrl, urlParameters, false);
     }
 
+    /**
+     * Send a POST request to the feedly servers
+     * @param apiUrl the API url, usually starts with "/v3/...."
+     * @param urlParameters this field is used for parameters and body
+     * @param isAuthenticated Set to true if the client is authenticated (This will add the OAuth key to the headers)
+     * @return The response from the server, usually a JSON String
+     */
     public String sendPostRequestToFeedly(String apiUrl, String urlParameters, boolean isAuthenticated) {
         return this.sendRequest(apiUrl, urlParameters, isAuthenticated, RequestType.POST);
     }
 
+    /**
+     * Send a POST request to the feedly servers
+     * @param apiUrl the API url, usually starts with "/v3/...."
+     * @param urlParameters this field is used for parameters and body
+     * @param isAuthenticated Set to true if the client is authenticated (This will add the OAuth key to the headers)
+     * @param contentType Set another content type
+     * @return The response from the server, usually a JSON String
+     */
     public String sendPostRequestToFeedly(String apiUrl, String urlParameters, boolean isAuthenticated,
                                           String contentType) {
         return this.sendRequest(apiUrl, urlParameters, isAuthenticated, RequestType.POST, contentType);
     }
 
+    /**
+     * Send a GET request to the feedly servers
+     * @param apiUrl the API url, usually starts with "/v3/...."
+     * @return The response from the server, usually a JSON String
+     */
     public String sendGetRequestToFeedly(String apiUrl) {
         return this.sendRequest(apiUrl, "", true, RequestType.GET);
     }
 
+    /**
+     * Send a DELETE request to the feedly servers
+     * @param apiUrl the API url, usually starts with "/v3/...."
+     * @return The response from the server, usually a JSON String
+     */
     public String sendDeleteRequestToFeedly(String apiUrl) {
         return this.sendRequest(apiUrl, "", true, RequestType.DELETE);
     }

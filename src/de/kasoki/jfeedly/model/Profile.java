@@ -17,6 +17,10 @@ package de.kasoki.jfeedly.model;
 
 import org.json.JSONObject;
 
+/**
+ * Representation model of the "/v3/profile" api calls. This represents your user.
+ * @author Christopher Kaster
+ */
 public class Profile {
     private String id;
     private String email;
@@ -25,7 +29,7 @@ public class Profile {
     private String locale;
     private String wave;
 
-    public Profile(String id, String email, String givenName, String familyName,
+    private Profile(String id, String email, String givenName, String familyName,
                    String locale, String wave) {
         this.id = id;
         this.email = email;
@@ -35,30 +39,37 @@ public class Profile {
         this.wave = wave;
     }
 
+    /** Returns the id of this user */
     public String getId() {
         return id;
     }
 
+    /** Returns the email address of this user */
     public String getEmail() {
         return email;
     }
 
+    /** Returns the first name of this user */
     public String getGivenName() {
         return givenName;
     }
 
+    /** Returns the last name of this user */
     public String getFamilyName() {
         return familyName;
     }
 
+    /** Returns the language of this user */
     public String getLocale() {
         return locale;
     }
 
+    /** Returns the "wave" of this user. Don't ask me what this is... :) */
     public String getWave() {
         return wave;
     }
 
+    /** Create a new profile from an existing JSON object */
     public static Profile fromJSONObject(JSONObject object) {
         return new Profile(object.getString("id"), object.getString("email"), object.getString("givenName"),
                 object.getString("familyName"), object.getString("locale"),

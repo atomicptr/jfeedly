@@ -18,6 +18,10 @@ package de.kasoki.jfeedly.model;
 import de.kasoki.jfeedly.JFeedly;
 import org.json.JSONObject;
 
+/**
+ * Representation model of the "/v3/feeds" api call, this class is nearly identical with the "Subscription" class
+ * @author Christopher Kaster
+ */
 public class Feed {
 
     private String id;
@@ -39,42 +43,52 @@ public class Feed {
         this.subscribers = subscribers;
     }
 
+    /** Returns the id of this feed */
     public String getId() {
         return id;
     }
 
+    /** Returns the title of this feed */
     public String getTitle() {
         return title;
     }
 
+    /** Returns the description of this feed */
     public String getDescription() {
         return description;
     }
 
+    /** Returns the website of this feed */
     public String getWebsite() {
         return website;
     }
 
+    /** Returns the velocity of this feed */
     public double getVelocity() {
         return velocity;
     }
 
+    /** Returns the language of this feed */
     public String getLanguage() {
         return language;
     }
 
+    /** Returns the number of subscribers of this feed */
     public int getNumberOfSubscribers() {
         return subscribers;
     }
 
+    /** mark all articles in this feed as read */
     public void markAsRead(JFeedly handler) {
         handler.markAsRead(this);
     }
 
+    /** Return the articles associated to this feed */
     public Entries getEntries(JFeedly handler) {
         return handler.getEntriesFor(this);
     }
 
+    /** Get the newest article in this feed */
     public Entry getNewestEntry(JFeedly handler) {
         Entries entries = this.getEntries(handler);
 
@@ -87,6 +101,7 @@ public class Feed {
         }
     }
 
+    /**Get the oldest article in this feed */
     public Entry getOldestEntry(JFeedly handler) {
         Entries entries = this.getEntries(handler);
 
@@ -99,6 +114,7 @@ public class Feed {
         }
     }
 
+    /** Create a new Feed from a given JSON object */
     public static Feed fromJSONObject(JSONObject object) {
         String id = object.getString("id");
         String title = object.getString("title");

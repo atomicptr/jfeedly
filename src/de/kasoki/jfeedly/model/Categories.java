@@ -21,6 +21,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Representation model of "/v3/categories" response from the API
+ * @author Christopher Kaster
+ */
 public class Categories implements Iterable<Category> {
     private ArrayList<Category> categories;
 
@@ -32,14 +36,28 @@ public class Categories implements Iterable<Category> {
         return categories.iterator();
     }
 
+    /**
+     * Returns the number of categories
+     * @return Number of categories
+     */
     public int getNumberOfCategories() {
         return categories.size();
     }
 
+    /**
+     * Returns a Category
+     * @param index
+     * @return Category
+     */
     public Category get(int index) {
         return categories.get(index);
     }
 
+    /**
+     * Returns a Category specified by an ID
+     * @param id
+     * @return Category
+     */
     public Category getById(String id) {
         for(Category c : this.categories) {
             if(c.getCategoryId().equals(id)) {
@@ -50,6 +68,11 @@ public class Categories implements Iterable<Category> {
         return null;
     }
 
+    /**
+     * Create a new "Categories"-wrapper from a given JSON array
+     * @param array
+     * @return
+     */
     public static Categories fromJSONArray(JSONArray array) {
         ArrayList<Category> categories = new ArrayList<Category>();
 

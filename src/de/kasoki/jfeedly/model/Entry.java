@@ -22,6 +22,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Representation model of one Entry from the "/v3/entries" api call. This class is sometimes refered to as article.
+ * @author Christopher Kaster
+ */
 public class Entry implements Comparable<Entry> {
 
     private String id;
@@ -62,78 +66,100 @@ public class Entry implements Comparable<Entry> {
         this.categoryIds = categoryIds;
     }
 
+    /** Returns the ID of this article */
     public String getId() {
         return this.id;
     }
 
+    /** Returns the fingerprint of this article */
     public String getFingerprint() {
         return fingerprint;
     }
 
+    /** Returns the origin ID of this article */
     public String getOriginId() {
         return originId;
     }
 
+    /** Returns the author of this article */
     public String getAuthor() {
         return author;
     }
 
+    /** Returns the date this article was crawled */
     public Date getCrawledDate() {
         return crawled;
     }
 
+    /** Returns the title of this article */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Check if this article has a summary
+     * @return true/false whenever this article has or has not a summary
+     */
     public boolean hasSummary() {
         return summaryContent != null;
     }
 
+    /** Get the content of the summary */
     public String getSummaryContent() {
         return summaryContent;
     }
 
+    /** Returns the summary direction */
     public String getSummaryDirection() {
         return summaryDirection;
     }
 
+    /** Returns the date this article was published */
     public Date getPublishedDate() {
         return published;
     }
 
+    /** Check if this article has a "visual" (a preview image) */
     public boolean hasVisual() {
         return visualUrl != null;
     }
 
+    /** Get the url of the preview image */
     public String getVisualUrl() {
         return visualUrl;
     }
 
+    /** Returns width of the preview image (-1 when not specified) */
     public int getVisualWidth() {
         return visualWidth;
     }
 
+    /** Returns height of the preview image (-1 when not specified) */
     public int getVisualHeight() {
         return visualHeight;
     }
 
+    /** Returns the content type of the preview image */
     public String getVisualContentType() {
         return visualContentType;
     }
 
+    /** Is this article unread? */
     public boolean isUnread() {
         return unread;
     }
 
+    /** Returns the IDs of the categories which affect this article */
     public ArrayList<String> getCategoryIds() {
         return categoryIds;
     }
 
+    /** Mark this article as read */
     public void markAsRead(JFeedly handler) {
         handler.markAsRead(this);
     }
 
+    /** Create a new Entry from the given JSON object */
     public static Entry fromJSONObject(JSONObject object) {
         String id = object.getString("id");
         String fingerprint = object.getString("fingerprint");
@@ -184,6 +210,7 @@ public class Entry implements Comparable<Entry> {
     }
 
     @Override
+    /** compare this article to another (by published date) */
     public int compareTo(Entry otherEntry) {
         return this.getPublishedDate().compareTo(otherEntry.getPublishedDate());
     }

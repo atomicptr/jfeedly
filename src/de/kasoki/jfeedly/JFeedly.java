@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * API handler for the Feedly API.
+ * @author Christopher Kaster
+ */
 public class JFeedly {
 
     private String appName = "jfeedly";
@@ -42,7 +46,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 13;
+    private static final int PATCH_VERSION = 14;
 
     private JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
@@ -52,6 +56,7 @@ public class JFeedly {
         this.httpHelper = new HTTPConnections(this);
     }
 
+    /** authenticate with the Feedly server */
     public void authenticate() {
         if(this.getVerbose()) {
             System.out.println("jfeedly v" + JFeedly.getVersion() + ": try to authenticate...");
@@ -122,30 +127,37 @@ public class JFeedly {
                 "&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions";
     }
 
+    /** Returns the base url of feedly this app is using (sandbox or cloud) */
     public String getBaseUrl() {
         return "http://" + this.basename + ".feedly.com";
     }
 
+    /** Returns the connection model */
     public FeedlyConnection getConnection() {
         return this.connection;
     }
 
+    /** Set a listener which will be called when the authentication is done */
     public void setOnAuthenticatedListener(OnAuthenticatedListener listener) {
         this.listener = listener;
     }
 
+    /** Set the name of this app (will for instance be displayed in the BrowserFrame window) */
     public void setAppName(String appName) {
         this.appName = appName;
     }
 
+    /** Make jfeedly verbose. This will print a lot of information for example every connection to the server */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 
+    /** Is jfeedly set to verbose? */
     public boolean getVerbose() {
         return this.verbose;
     }
 
+    /** Is the user a Pro user? (Can he use pro features like in stream search?) */
     public boolean isPro() {
         if(this.connection != null) {
             return this.connection.getPlan().equals("pro");
@@ -156,6 +168,7 @@ public class JFeedly {
         return false;
     }
 
+    /** Returns a user profile */
     public Profile getProfile() {
         if(this.connection != null) {
             String response = httpHelper.sendGetRequestToFeedly("/v3/profile/");
@@ -170,6 +183,7 @@ public class JFeedly {
         return null;
     }
 
+    /** Returns all categories */
     public Categories getCategories() {
         if(this.connection != null) {
             String response = httpHelper.sendGetRequestToFeedly("/v3/categories/");
@@ -184,6 +198,7 @@ public class JFeedly {
         return null;
     }
 
+    /** Returns all subscriptions */
     public Subscriptions getSubscriptions() {
         if(this.connection != null) {
             String response = httpHelper.sendGetRequestToFeedly("/v3/subscriptions/");
@@ -198,6 +213,7 @@ public class JFeedly {
         return null;
     }
 
+    /** Return all tags */
     public Tags getTags() {
         if(this.connection != null) {
             String response = httpHelper.sendGetRequestToFeedly("/v3/tags/");
@@ -212,6 +228,12 @@ public class JFeedly {
         return null;
     }
 
+    /**
+     * Subscribe to a feed
+     * @param feedUrl The URL of the feed
+     * @param title The title of this feed
+     * @param categories A list of categories, if this is empty the feed will be in the "Uncategorized" category.
+     */
     public void subscribe(String feedUrl, String title, List<Category> categories) {
         if(this.connection != null) {
             JSONObject object = new JSONObject();
@@ -240,6 +262,7 @@ public class JFeedly {
         }
     }
 
+    /** Save changes on a subscription to the feedly server */
     public void updateSubscription(Subscription subscription, ArrayList<Category> categories) {
         if(this.connection != null) {
             JSONObject object = new JSONObject();
@@ -268,6 +291,7 @@ public class JFeedly {
         }
     }
 
+    /** Remove a given subscription */
     public void deleteSubscription(Subscription subscription) {
         String feedId = subscription.getId();
 
@@ -276,10 +300,21 @@ public class JFeedly {
         System.err.println("jfeedly: deleting subscriptions seems not to work at the moment :(");
     }
 
+    /**
+     * Search feeds by a specified search query. This will not search in streams.
+     * @param query search query (e.g. "android", "java", etc.)
+     * @return A list of feeds which are somehow affected by your search query.
+     */
     public ArrayList<Feed> searchFeeds(String query) {
         return this.searchFeeds(query, 20);
     }
 
+    /**
+     * Search feeds by a specified search query. This will not search in streams.
+     * @param query search query (e.g. "android", "java", etc.)
+     * @param numberOfFeeds Specifiy a maximum number of feeds which will be returned (Default: 20).
+     * @return A list of feeds which are somehow affected by your search query.
+     */
     public ArrayList<Feed> searchFeeds(String query, int numberOfFeeds) {
         String response = httpHelper.sendGetRequestToFeedly("/v3/search/feeds/?q=" + query + "&n=" + numberOfFeeds);
 
@@ -298,6 +333,12 @@ public class JFeedly {
         return feeds;
     }
 
+    /**
+     * Search in streams (PRO only)
+     * @param feedId The feed/subscription where you want to find something
+     * @param query The search query
+     * @return A JSON string (couldn't test this yet because i'm not a Pro user)
+     */
     public String searchInFeeds(String feedId, String query) {
         if(isPro()) {
             String response = httpHelper.sendGetRequestToFeedly("/v3/streams/contents?streamId=" + feedId +
@@ -309,40 +350,65 @@ public class JFeedly {
         }
     }
 
+    /** Returns ALL entries (max. 10'000) */
     public Entries getEntries() {
         return this.getEntries(10000);
     }
 
+    /**
+     *  Returns ALL entries with a specified maximum
+     * @param number Maximum of articles
+     */
     public Entries getEntries(int number) {
         Profile profile = this.getProfile();
 
         return this.getEntriesFor(Category.getGlobalAllCategory(profile).getCategoryId(), true, true, number);
     }
 
+    /** Returns all articles for a specified Category (max. 10'000) */
     public Entries getEntriesFor(Category category) {
         return this.getEntriesFor(category.getCategoryId(), true, true, 10000);
     }
 
-    public Entries getEntriesFor(Feed feed) {
-        return this.getEntriesFor(feed.getId(), true, true, 10000);
-    }
-
-    public Entries getEntriesFor(Feed feed, boolean unreadOnly) {
-        return this.getEntriesFor(feed.getId(), unreadOnly, true, 10000);
-    }
-
-    public Entries getEntriesFor(Subscription subscription) {
-        return this.getEntriesFor(subscription.getId(), true, true, 10000);
-    }
-
-    public Entries getEntriesFor(Subscription subscription, boolean unreadOnly) {
-        return this.getEntriesFor(subscription.getId(), unreadOnly, true, 10000);
-    }
-
+    /** Returns all articles for a specified Category (max. 10'000)
+     * @param unreadOnly Show only the unread entries?
+     */
     public Entries getEntriesFor(Category category, boolean unreadOnly) {
         return this.getEntriesFor(category.getCategoryId(), unreadOnly, true, 10000);
     }
 
+    /** Returns all articles for a specified Feed (max. 10'000) */
+    public Entries getEntriesFor(Feed feed) {
+        return this.getEntriesFor(feed.getId(), true, true, 10000);
+    }
+
+    /** Returns all articles for a specified Feed (max. 10'000)
+     * @param unreadOnly Show only the unread entries?
+     */
+    public Entries getEntriesFor(Feed feed, boolean unreadOnly) {
+        return this.getEntriesFor(feed.getId(), unreadOnly, true, 10000);
+    }
+
+    /** Returns all articles for a specified Subscription (max. 10'000) */
+    public Entries getEntriesFor(Subscription subscription) {
+        return this.getEntriesFor(subscription.getId(), true, true, 10000);
+    }
+
+    /** Returns all articles for a specified Subscription (max. 10'000)
+     * @param unreadOnly Show only the unread entries?
+     */
+    public Entries getEntriesFor(Subscription subscription, boolean unreadOnly) {
+        return this.getEntriesFor(subscription.getId(), unreadOnly, true, 10000);
+    }
+
+    /**
+     * Returns articles
+     * @param id All articles grouped by one ID. May be a subscription, feed, tag or category id
+     * @param unreadOnly List only the unread entries
+     * @param showNewest Newest first?
+     * @param number Maximum number of entries
+     * @return A bunch of articles
+     */
     public Entries getEntriesFor(String id, boolean unreadOnly, boolean showNewest, int number) {
         String entryIdResponse = httpHelper.sendGetRequestToFeedly("/v3/streams/ids?streamId=" + id +
             "&unreadOnly=" + unreadOnly + "&count=" + number + "&ranked=" + (showNewest ? "newest" : "oldest"));
@@ -352,6 +418,7 @@ public class JFeedly {
         return Entries.fromJSONArray(new JSONArray(response));
     }
 
+    /** Get a Feed specified by an ID */
     public Feed getFeedById(String feedId) {
         String response = httpHelper.sendPostRequestToFeedly("/v3/feeds/.mget", "[ \"" + feedId + "\" ]", true);
 
@@ -362,14 +429,17 @@ public class JFeedly {
         return Feed.fromJSONObject(object);
     }
 
+    /** Returns the number of unread articles for a category */
     public int getCountOfUnreadArticles(Category category) {
         return this.getCountOfUnreadArticles(category.getCategoryId());
     }
 
+    /** Returns the number of unread articles for a subscription */
     public int getCountOfUnreadArticles(Subscription subscription) {
         return this.getCountOfUnreadArticles(subscription.getId());
     }
 
+    /** Returns the number of unread articles for an ID (may be a feed, subscription, category or tag */
     private int getCountOfUnreadArticles(String id) {
         String response = httpHelper.sendGetRequestToFeedly("/v3/markers/counts");
 
@@ -398,22 +468,27 @@ public class JFeedly {
         return unreadCount;
     }
 
+    /** Mark everything as read */
     public void markEverythingAsRead() {
         this.markAsRead(Category.getGlobalAllCategory(getProfile()));
     }
 
+    /** Mark an article as read */
     public void markAsRead(Entry entry) {
         this.markAsRead(entry.getId(), "entries", null);
     }
 
+    /** Mark a subscription as read */
     public void markAsRead(Subscription subscription) {
         this.markAsRead(subscription.getId(), "feeds", subscription.getNewestEntry(this));
     }
 
+    /** Mark a feed as read */
     public void markAsRead(Feed feed) {
         this.markAsRead(feed.getId(), "feeds", feed.getNewestEntry(this));
     }
 
+    /** Mark a category as read */
     public void markAsRead(Category category) {
         this.markAsRead(category.getCategoryId(), "categories", category.getNewestEntry(this));
     }
@@ -449,22 +524,39 @@ public class JFeedly {
         httpHelper.sendPostRequestToFeedly("/v3/markers", object.toString(), true);
     }
 
+    /**
+     * Export the users subscriptions as OPML
+     * @return A String which contains a XML/OPML files content.
+     */
     public String exportOPML() {
         return httpHelper.sendGetRequestToFeedly("/v3/opml");
     }
 
+    /** Add subscriptions to the users account based on this OPML string */
     public void importOPML(String opmlString) {
         httpHelper.sendPostRequestToFeedly("/v3/markers", opmlString, true, "application/xml");
     }
 
+    /**
+     * Create a handler for sandbox usage.
+     * @param apiSecretKey Your secret api key. If you have none please contact Feedly.
+     * @return A jfeedly api handler
+     */
     public static JFeedly createSandboxHandler(String apiSecretKey) {
         return new JFeedly("sandbox", "sandbox", apiSecretKey);
     }
 
+    /**
+     * Create a handler for production usage
+     * @param clientId Your client id.
+     * @param apiSecretKey Your secret api key.
+     * @return A jfeedly api handler
+     */
     public static JFeedly createHandler(String clientId, String apiSecretKey) {
         return new JFeedly("cloud", clientId, apiSecretKey);
     }
 
+    /** Returns the version of jfeedly */
     public static String getVersion() {
         return MAJOR_VERSION + "." + MINOR_VERSION + "." + PATCH_VERSION;
     }

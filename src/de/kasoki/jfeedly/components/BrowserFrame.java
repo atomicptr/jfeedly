@@ -28,6 +28,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
+/**
+ * A browser window which allows the user to sign into Feedly
+ * @author Christopher Kaster
+ */
 public class BrowserFrame extends JFrame {
 
     private String url;
@@ -41,6 +45,11 @@ public class BrowserFrame extends JFrame {
         void onSignedIn(String code);
     };
 
+    /**
+     * Creates a new BrowserFrame
+     * @param title The title of the browser window
+     * @param url The url where this browser will navigate to.
+     */
     public BrowserFrame(String title, String url) {
         this.url = url;
 
@@ -62,6 +71,10 @@ public class BrowserFrame extends JFrame {
         });
     }
 
+    /**
+     * Set a listener which will be called when the authentication process is done
+     * @param listener
+     */
     public void setOnAuthenticatedListener(OnBrowserAuthenticatedListener listener) {
         this.listener = listener;
     }
@@ -142,6 +155,10 @@ public class BrowserFrame extends JFrame {
         return null;
     }
 
+    /**
+     * NEVER rely on this method, as this is only for internal use.
+     * @return Is the browser signed into feedly?
+     */
     public boolean isSignedIn() {
         return this.isSignedIn;
     }

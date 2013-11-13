@@ -25,6 +25,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 
+/**
+ * Representation of a connection to Feedly
+ * @author Christopher Kaster
+ */
 public class FeedlyConnection {
     private String accessToken;
     private String refreshToken;
@@ -43,24 +47,29 @@ public class FeedlyConnection {
         this.expireDate = new Date(Long.parseLong(map.get("expire_date")));
     }
 
+    /** Is the access token expired? */
     public boolean isExpired() {
         Date currentDate = new Date();
 
         return currentDate.after(this.expireDate);
     }
 
+    /** Returns the refresh token */
     public String getRefreshToken() {
         return this.refreshToken;
     }
 
+    /** Returns the access token */
     public String getAccessToken() {
         return this.accessToken;
     }
 
+    /** Returns the plan (standard or pro) */
     public String getPlan() {
         return this.plan;
     }
 
+    /** refresh the tokens by a given JSON object (which was an answer from the server) */
     public void refresh(JSONObject object) {
         this.accessToken = object.getString("access_token");
         this.id = object.getString("id");
@@ -71,6 +80,7 @@ public class FeedlyConnection {
         this.save();
     }
 
+    /** Save the connection details to a file */
     public void save() {
         Properties prop = new Properties();
 
@@ -89,6 +99,7 @@ public class FeedlyConnection {
         }
     }
 
+    /** Restores an existing connection */
     public static FeedlyConnection restoreConnection() {
         Properties prop = new Properties();
 
@@ -109,6 +120,7 @@ public class FeedlyConnection {
         return null;
     }
 
+    /** Initiate a new connection */
     public static FeedlyConnection newConnection(JSONObject object) {
         Date expireDate = FeedlyConnection.getExpireDate(object.getLong("expires_in"));
 
@@ -147,6 +159,7 @@ public class FeedlyConnection {
         return map;
     }
 
+    /** Was there once a connection? */
     public static boolean oldConnectionExists() {
         File connectionFile = new File("connection.properties");
 

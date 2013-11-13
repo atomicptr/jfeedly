@@ -17,6 +17,10 @@ package de.kasoki.jfeedly.model;
 
 import org.json.JSONObject;
 
+/**
+ * Representation model of a tag
+ * @author Christopher Kaster
+ */
 public class Tag {
 
     private String id;
@@ -27,14 +31,17 @@ public class Tag {
         this.label = label;
     }
 
+    /** Returns the ID of this tag */
     public String getId() {
         return this.id;
     }
 
+    /** Returns the label of this tag */
     public String getLabel() {
         return this.label;
     }
 
+    /** Create a new tag from a given JSON object */
     public static Tag fromJSONObject(JSONObject object) {
         String id = object.getString("id");
 

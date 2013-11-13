@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+/**
+ * Representation model of the "/v3/entries" API call
+ * @author Christopher Kaster
+ */
 public class Entries implements Iterable<Entry> {
     private ArrayList<Entry> entries;
 
@@ -33,14 +37,17 @@ public class Entries implements Iterable<Entry> {
         return entries.iterator();
     }
 
+    /** Returns the number of entries in this container */
     public int getNumberOfEntries() {
         return entries.size();
     }
 
+    /** Returns a specific Entry */
     public Entry get(int index) {
         return entries.get(index);
     }
 
+    /** Returns an Entry by the given ID */
     public Entry getById(String id) {
         for(Entry t : this.entries) {
             if(t.getId().equals(id)) {
@@ -51,14 +58,17 @@ public class Entries implements Iterable<Entry> {
         return null;
     }
 
+    /** Sort articles by date, the oldest one comes first */
     public void sortByDateOldestFirst() {
         Collections.sort(entries);
     }
 
+    /** Sort articles by date, the newest one comes first */
     public void sortByDateNewestFirst() {
         Collections.sort(entries, Collections.reverseOrder());
     }
 
+    /** Create a new Entries-wrapper from a given JSON array */
     public static Entries fromJSONArray(JSONArray array) {
         ArrayList<Entry> entries = new ArrayList<Entry>();
 

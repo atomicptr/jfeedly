@@ -21,6 +21,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Representation model of the "/v3/subscriptions" api call
+ * @author Christopher Kaster
+ */
 public class Subscriptions implements Iterable<Subscription> {
     private ArrayList<Subscription> subscriptions;
 
@@ -32,14 +36,17 @@ public class Subscriptions implements Iterable<Subscription> {
         return subscriptions.iterator();
     }
 
+    /** Returns the number of subscriptions in this collection */
     public int getNumberOfSubscriptions() {
         return subscriptions.size();
     }
 
+    /** Get a specified subscription */
     public Subscription get(int index) {
         return subscriptions.get(index);
     }
 
+    /** Get a subscription by ID */
     public Subscription getById(String id) {
         for(Subscription s : this.subscriptions) {
             if(s.getId().equals(id)) {
@@ -50,6 +57,7 @@ public class Subscriptions implements Iterable<Subscription> {
         return null;
     }
 
+    /** Create a new Subscriptions wrapper from a given JSON array */
     public static Subscriptions fromJSONArray(JSONArray array) {
         ArrayList<Subscription> subscriptions = new ArrayList<Subscription>();
 

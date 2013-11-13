@@ -21,6 +21,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Representation model of the "/v3/tags" api calls
+ * @author Christopher Kaster
+ */
 public class Tags implements Iterable<Tag> {
     private ArrayList<Tag> tags;
 
@@ -32,14 +36,17 @@ public class Tags implements Iterable<Tag> {
         return tags.iterator();
     }
 
+    /** Return the number of tags in this collection */
     public int getNumberOfTags() {
         return tags.size();
     }
 
+    /** Get a specific Tag */
     public Tag get(int index) {
         return tags.get(index);
     }
 
+    /** Get a specific Tag by ID */
     public Tag getById(String id) {
         for(Tag t : this.tags) {
             if(t.getId().equals(id)) {
@@ -50,6 +57,7 @@ public class Tags implements Iterable<Tag> {
         return null;
     }
 
+    /** Create a new Tags wrapper from a given JSON array */
     public static Tags fromJSONArray(JSONArray array) {
         ArrayList<Tag> tags = new ArrayList<Tag>();
 

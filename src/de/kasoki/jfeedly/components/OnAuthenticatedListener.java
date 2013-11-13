@@ -17,6 +17,10 @@ package de.kasoki.jfeedly.components;
 
 import de.kasoki.jfeedly.JFeedly;
 
+/**
+ * This listener will be called when the authentication process is done
+ * @author Christopher Kaster
+ */
 public interface OnAuthenticatedListener {
     void onAuthenticated(JFeedly feedly);
 }

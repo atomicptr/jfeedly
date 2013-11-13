@@ -22,6 +22,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Representation model of a subscription. Somehow similiar to Feed.
+ * @author Christopher Kaster
+ */
 public class Subscription {
     private String id;
     private String title;
@@ -39,42 +43,52 @@ public class Subscription {
         this.categoryIds = categoryIds;
     }
 
+    /** Returns the id of this subscription (This is identical to the feed id) */
     public String getId() {
         return id;
     }
 
+    /** Returns the title of this subscription */
     public String getTitle() {
         return title;
     }
 
+    /** Set a new title for this subscription */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /** Return the velocity of this subscription */
     public double getVelocity() {
         return velocity;
     }
 
-    public Date getUpdated() {
+    /** Get the date this was last updated */
+    public Date getUpdatedDate() {
         return updated;
     }
 
+    /** Get the website of this subscription */
     public String getWebsite() {
         return website;
     }
 
+    /** Get the associated category ids */
     public ArrayList<String> getCategoryIds() {
         return this.categoryIds;
     }
 
+    /** Add a new category to this subscription */
     public void addCategory(Category category) {
         this.categoryIds.add(category.getCategoryId());
     }
 
+    /** Remove a category from this subscription */
     public void removeCategory(Category category) {
         this.categoryIds.remove(category.getCategoryId());
     }
 
+    /** save changes to this subscription to the servers */
     public void update(JFeedly handler) {
         Categories userCategories = handler.getCategories();
 
@@ -87,22 +101,27 @@ public class Subscription {
         handler.updateSubscription(this, categories);
     }
 
+    /** Delete this subscription */
     public void delete(JFeedly handler) {
         handler.deleteSubscription(this);
     }
 
+    /** get number of unread articles associated to this subscription */
     public int getNumberOfUnreadArticles(JFeedly handler) {
         return handler.getCountOfUnreadArticles(this);
     }
 
+    /** mark all articles in this subscription as read */
     public void markAsRead(JFeedly handler) {
         handler.markAsRead(this);
     }
 
+    /** Get all articles associated with this subscription */
     public Entries getEntries(JFeedly handler) {
         return handler.getEntriesFor(this);
     }
 
+    /** get the newest article in this subscription */
     public Entry getNewestEntry(JFeedly handler) {
         Entries entries = this.getEntries(handler);
 
@@ -115,6 +134,7 @@ public class Subscription {
         }
     }
 
+    /** get the oldest article in this subscription */
     public Entry getOldestEntry(JFeedly handler) {
         Entries entries = this.getEntries(handler);
 
@@ -127,6 +147,7 @@ public class Subscription {
         }
     }
 
+    /** Create a new subscription from the given JSON object */
     public static Subscription fromJSONObject(JSONObject object) {
         Date updatedDate = new Date(object.getLong("updated"));
 
