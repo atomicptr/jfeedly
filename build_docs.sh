@@ -1,0 +1,1 @@
+javadoc -sourcepath src/ -d docs/ de.kasoki.jfeedly de.kasoki.jfeedly.components de.kasoki.jfeedly.helper de.kasoki.jfeedly.model -windowtitle 'jfeedly API specification' -doctitle 'jfeedly API specification'
