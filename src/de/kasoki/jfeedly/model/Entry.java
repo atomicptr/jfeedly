@@ -166,7 +166,7 @@ public class Entry implements Comparable<Entry> {
         String originId = object.getJSONObject("origin").getString("streamId");
         String author = object.has("author") ? object.getString("author") : "None";
         Date crawled = new Date(object.getLong("crawled"));
-        String title = object.getString("title");
+        String title = object.has("title") ? object.getString("title") : "No title specified";
 
         String summaryContent = null;
         String summaryDirection = null;
