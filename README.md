@@ -8,6 +8,11 @@ How to use jfeedly
 
 [Look at this file](https://github.com/Kasoki/jfeedly/blob/master/src/de/kasoki/jfeedly/Example.java)
 
+Documentation
+=============
+
+Want to read the documentation online? [Just hit this link](http://kasoki.github.io/jfeedly/docs)
+
 Used libraries
 ==============
 
