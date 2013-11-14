@@ -37,6 +37,9 @@ public class FeedlyConnection {
     private String id;
     private Date expireDate;
 
+    public static final String CONNECTION_FILE_PATH_DEFAULT = "connection.properties";
+    private String connectionFilePath;
+
     private FeedlyConnection(HashMap<String, String> map) {
         this.accessToken = map.get("access_token");
         this.refreshToken = map.get("refresh_token");
@@ -45,6 +48,8 @@ public class FeedlyConnection {
         this.id = map.get("id");
 
         this.expireDate = new Date(Long.parseLong(map.get("expire_date")));
+
+        this.connectionFilePath = map.get("connection_path");
     }
 
     /** Is the access token expired? */
@@ -92,7 +97,7 @@ public class FeedlyConnection {
         prop.setProperty("expire_date", Long.toString(this.expireDate.getTime()));
 
         try {
-            prop.store(new FileOutputStream("connection.properties"), null);
+            prop.store(new FileOutputStream(this.connectionFilePath), null);
         } catch (IOException e) {
             System.err.println("This should only appear if you have no rights to write in this folder!");
             e.printStackTrace();
@@ -100,16 +105,16 @@ public class FeedlyConnection {
     }
 
     /** Restores an existing connection */
-    public static FeedlyConnection restoreConnection() {
+    public static FeedlyConnection restoreConnection(String connectionFilePath) {
         Properties prop = new Properties();
 
         try {
             //load connection properties file
-            prop.load(new FileInputStream("connection.properties"));
+            prop.load(new FileInputStream(connectionFilePath));
 
             HashMap<String, String> map = createConnectionHashMap(prop.getProperty("access_token"),
                     prop.getProperty("refresh_token"), prop.getProperty("plan"), prop.getProperty("token_type"),
-                    prop.getProperty("id"), prop.getProperty("expire_date"));
+                    prop.getProperty("id"), prop.getProperty("expire_date"), connectionFilePath);
 
             return new FeedlyConnection(map);
 
@@ -121,12 +126,12 @@ public class FeedlyConnection {
     }
 
     /** Initiate a new connection */
-    public static FeedlyConnection newConnection(JSONObject object) {
+    public static FeedlyConnection newConnection(JSONObject object, String connectionFilePath) {
         Date expireDate = FeedlyConnection.getExpireDate(object.getLong("expires_in"));
 
         HashMap<String, String> map = createConnectionHashMap(object.getString("access_token"),
                 object.getString("refresh_token"), object.getString("plan"), object.getString("token_type"),
-                object.getString("id"), Long.toString(expireDate.getTime()));
+                object.getString("id"), Long.toString(expireDate.getTime()), connectionFilePath);
 
         FeedlyConnection connection = new FeedlyConnection(map);
 
@@ -145,7 +150,7 @@ public class FeedlyConnection {
 
     private static HashMap<String, String> createConnectionHashMap(String accessToken, String refreshToken,
                                                                    String plan, String tokenType,
-                                                                   String id, String expireDate) {
+                                                                   String id, String expireDate, String path) {
 
         HashMap<String, String> map = new HashMap<String, String>();
 
@@ -155,13 +160,14 @@ public class FeedlyConnection {
         map.put("token_type", tokenType);
         map.put("id", id);
         map.put("expire_date", expireDate);
+        map.put("connection_path", path);
 
         return map;
     }
 
     /** Was there once a connection? */
-    public static boolean oldConnectionExists() {
-        File connectionFile = new File("connection.properties");
+    public static boolean oldConnectionExists(String connectionFilePath) {
+        File connectionFile = new File(connectionFilePath);
 
         return connectionFile.exists();
     }
