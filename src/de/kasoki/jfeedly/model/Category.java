@@ -88,8 +88,23 @@ public class Category {
     }
 
     /** Get the global.all (which contains all articles) category */
+    public static Category getGlobalAllCategory(JFeedly handler) {
+        return Category.getGlobalAllCategory(handler, "All");
+    }
+
+    /** Get the global.all (which contains all articles) category */
     public static Category getGlobalAllCategory(Profile userProfile) {
-        return new Category("user/" + userProfile.getId() + "/category/global.all", "All");
+        return Category.getGlobalAllCategory(userProfile, "All");
+    }
+
+    /** Get the global.all (which contains all articles) category */
+    public static Category getGlobalAllCategory(JFeedly handler, String label) {
+        return Category.getGlobalAllCategory(handler.getProfile(), label);
+    }
+
+    /** Get the global.all (which contains all articles) category */
+    public static Category getGlobalAllCategory(Profile userProfile, String label) {
+        return new Category("user/" + userProfile.getId() + "/category/global.all", label);
     }
 
 }
