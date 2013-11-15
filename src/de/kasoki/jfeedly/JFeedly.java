@@ -46,10 +46,10 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 16;
+    private static final int PATCH_VERSION = 17;
     private String connectionFilePath;
 
-    private JFeedly(String basename, String clientId, String apiSecretKey) {
+    protected JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
         this.clientId = clientId;
         this.apiSecretKey = apiSecretKey;
@@ -447,7 +447,7 @@ public class JFeedly {
     }
 
     /** Returns the number of unread articles for an ID (may be a feed, subscription, category or tag */
-    private int getCountOfUnreadArticles(String id) {
+    protected int getCountOfUnreadArticles(String id) {
         String response = httpHelper.sendGetRequestToFeedly("/v3/markers/counts");
 
         JSONObject object = new JSONObject(response);
@@ -561,6 +561,25 @@ public class JFeedly {
      */
     public static JFeedly createHandler(String clientId, String apiSecretKey) {
         return new JFeedly("cloud", clientId, apiSecretKey);
+    }
+
+    /**
+     * Create a cached handler for sandbox usage.
+     * @param apiSecretKey Your secret api key. If you have none please contact Feedly.
+     * @return A jfeedly api handler
+     */
+    public static JFeedlyCached createCachcedSandboxHandler(String apiSecretKey) {
+        return JFeedlyCached.createCachedSandboxHandler(apiSecretKey);
+    }
+
+    /**
+     * Create a cached handler for production usage
+     * @param clientId Your client id.
+     * @param apiSecretKey Your secret api key.
+     * @return A jfeedly api handler
+     */
+    public static JFeedlyCached createCachedHandler(String clientId, String apiSecretKey) {
+        return JFeedlyCached.createCachedHandler(clientId, apiSecretKey);
     }
 
     /** Returns the version of jfeedly */

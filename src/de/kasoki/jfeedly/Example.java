@@ -30,6 +30,8 @@ public class Example {
         public void onAuthenticated(JFeedly feedly) {
             System.out.println("JFeedly is now Authenticated");
 
+            System.out.println("JFeedly is cached? " + ((feedly instanceof JFeedlyCached) ? "True" : "False"));
+
             // get profile
             Profile profile = feedly.getProfile();
 
@@ -128,9 +130,9 @@ public class Example {
 
         String secretApiKey = prop.getProperty("secret_api_key");
 
-        JFeedly feedly = JFeedly.createSandboxHandler(secretApiKey);
+        JFeedly feedly = JFeedly.createCachcedSandboxHandler(secretApiKey);
 
-        feedly.setVerbose(true);
+        feedly.setVerbose(false);
 
         feedly.setOnAuthenticatedListener(listener);
 
