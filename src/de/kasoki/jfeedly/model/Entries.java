@@ -68,6 +68,17 @@ public class Entries implements Iterable<Entry> {
         Collections.sort(entries, Collections.reverseOrder());
     }
 
+    /** Returns a list with all entry ids */
+    public ArrayList<String> toIdsList() {
+        ArrayList<String> ids = new ArrayList<String>();
+
+        for(Entry entry : this.entries) {
+            ids.add(entry.getId());
+        }
+
+        return ids;
+    }
+
     /** Create a new Entries-wrapper from a given JSON array */
     public static Entries fromJSONArray(JSONArray array) {
         ArrayList<Entry> entries = new ArrayList<Entry>();
@@ -78,6 +89,10 @@ public class Entries implements Iterable<Entry> {
             entries.add(Entry.fromJSONObject(object));
         }
 
+        return new Entries(entries);
+    }
+
+    public static Entries fromArrayList(ArrayList<Entry> entries) {
         return new Entries(entries);
     }
 

@@ -3,6 +3,7 @@ package de.kasoki.jfeedly;
 import de.kasoki.jfeedly.helper.CachedType;
 import de.kasoki.jfeedly.model.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class JFeedlyCached extends JFeedly {
@@ -11,7 +12,8 @@ public class JFeedlyCached extends JFeedly {
     private CachedType<Categories> cachedCategories;
     private CachedType<Subscriptions> cachedSubscriptions;
     private CachedType<Tags> cachedTags;
-    private HashMap<String, CachedType<Entries>> cachedEntries;
+    private HashMap<String, CachedType<ArrayList<String>>> cachedEntryIds;
+    private HashMap<String, CachedType<Entry>> cachedEntries;
     private HashMap<String, CachedType<Feed>> cachedFeed;
     private HashMap<String, CachedType<Integer>> cachedUnreadCount;
     private CachedType<String> cachedOPML;
@@ -23,7 +25,8 @@ public class JFeedlyCached extends JFeedly {
         cachedCategories = new CachedType<Categories>();
         cachedSubscriptions = new CachedType<Subscriptions>();
         cachedTags = new CachedType<Tags>();
-        cachedEntries = new HashMap<String, CachedType<Entries>>();
+        cachedEntryIds = new HashMap<String, CachedType<ArrayList<String>>>();
+        cachedEntries = new HashMap<String, CachedType<Entry>>();
         cachedFeed = new HashMap<String, CachedType<Feed>>();
         cachedUnreadCount = new HashMap<String, CachedType<Integer>>();
         cachedOPML = new CachedType<String>();
@@ -75,20 +78,53 @@ public class JFeedlyCached extends JFeedly {
      */
     @Override
     public Entries getEntriesFor(String id, boolean unreadOnly, boolean showNewest, int number) {
-        if(cachedEntries.containsKey(id)) {
-            CachedType<Entries> entries = cachedEntries.get(id);
+        if(cachedEntryIds.containsKey(id)) {
+            CachedType<ArrayList<String>> entryIds = cachedEntryIds.get(id);
 
-            if(entries.isEmpty() || entries.isExpired()) {
-                entries.set(super.getEntriesFor(id, unreadOnly, showNewest, number));
+            if(entryIds.isEmpty() || entryIds.isExpired()) {
+                Entries entries = super.getEntriesFor(id, unreadOnly, showNewest, number);
+
+                entryIds.set(entries.toIdsList());
+
+                // cache entry ids
+                cachedEntryIds.put(id, entryIds);
+
+                // cache entries
+                cacheEntries(entries);
             }
         } else {
-            CachedType<Entries> entries = new CachedType<Entries>(
-                    super.getEntriesFor(id, unreadOnly, showNewest, number));
+            Entries entries = super.getEntriesFor(id, unreadOnly, showNewest, number);
 
-            cachedEntries.put(id, entries);
+            CachedType<ArrayList<String>> cached = new CachedType<ArrayList<String>>(entries.toIdsList());
+
+            // cache entry ids
+            cachedEntryIds.put(id, cached);
+
+            // cache entries
+            cacheEntries(entries);
         }
 
-        return cachedEntries.get(id).get();
+        CachedType<ArrayList<String>> entryIds = cachedEntryIds.get(id);
+
+        return this.getEntries(entryIds.get());
+    }
+
+    private void cacheEntries(Entries entries) {
+        for(Entry entry : entries) {
+            CachedType<Entry> cachedEntry = new CachedType<Entry>(entry);
+
+            cachedEntries.put(entry.getId(), cachedEntry);
+        }
+    }
+
+    private Entries getEntries(ArrayList<String> ids) {
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+
+        for(String id : ids) {
+            entries.add(cachedEntries.get(id).get());
+        }
+
+        return Entries.fromArrayList(entries);
     }
 
     /** Get a Feed specified by an ID */

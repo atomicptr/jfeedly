@@ -46,7 +46,7 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 17;
+    private static final int PATCH_VERSION = 18;
     private String connectionFilePath;
 
     protected JFeedly(String basename, String clientId, String apiSecretKey) {
