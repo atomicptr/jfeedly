@@ -92,6 +92,7 @@ public class Entries implements Iterable<Entry> {
         return new Entries(entries);
     }
 
+    /** Create a new Entries-wrapper from a given ArrayList filled with entries */
     public static Entries fromArrayList(ArrayList<Entry> entries) {
         return new Entries(entries);
     }
