@@ -58,6 +58,11 @@ public class Entries implements Iterable<Entry> {
         return null;
     }
 
+    /** Return as array list */
+    public ArrayList<Entry> toArrayList() {
+        return this.entries;
+    }
+
     /** Sort articles by date, the oldest one comes first */
     public void sortByDateOldestFirst() {
         Collections.sort(entries);
