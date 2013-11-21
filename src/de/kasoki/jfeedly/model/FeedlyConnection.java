@@ -37,7 +37,6 @@ public class FeedlyConnection {
     private String id;
     private Date expireDate;
 
-    public static final String CONNECTION_FILE_PATH_DEFAULT = "connection.properties";
     private String connectionFilePath;
 
     private FeedlyConnection(HashMap<String, String> map) {

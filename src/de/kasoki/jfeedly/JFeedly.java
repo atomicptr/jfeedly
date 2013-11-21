@@ -46,8 +46,8 @@ public class JFeedly {
 
     private static final int MAJOR_VERSION = 0;
     private static final int MINOR_VERSION = 0;
-    private static final int PATCH_VERSION = 18;
-    private String connectionFilePath;
+    private static final int PATCH_VERSION = 19;
+    private String configPath = ".";
 
     protected JFeedly(String basename, String clientId, String apiSecretKey) {
         this.basename = basename;
@@ -55,8 +55,6 @@ public class JFeedly {
         this.apiSecretKey = apiSecretKey;
 
         this.httpHelper = new HTTPConnections(this);
-
-        this.connectionFilePath = FeedlyConnection.CONNECTION_FILE_PATH_DEFAULT;
     }
 
     /** authenticate with the Feedly server */
@@ -65,7 +63,9 @@ public class JFeedly {
             System.out.println("jfeedly v" + JFeedly.getVersion() + ": try to authenticate...");
         }
 
-        if(!FeedlyConnection.oldConnectionExists(connectionFilePath)) {
+        System.out.println("trying to restore connection from file: " + configPath + "/connection.properties");
+
+        if(!FeedlyConnection.oldConnectionExists(configPath + "/connection.properties")) {
             String authUrl = this.getAuthenticationUrl();
             BrowserFrame frame = new BrowserFrame(appName + " Authenticate", authUrl);
 
@@ -78,7 +78,7 @@ public class JFeedly {
 
             frame.setVisible(true);
         } else {
-            connection = FeedlyConnection.restoreConnection(connectionFilePath);
+            connection = FeedlyConnection.restoreConnection(configPath + "/connection.properties");
 
             if(connection.isExpired()) {
                 System.out.println("Tokens are expired. \nRequest new tokens...");
@@ -100,7 +100,7 @@ public class JFeedly {
 
         JSONObject object = new JSONObject(response);
 
-        this.connection = FeedlyConnection.newConnection(object, connectionFilePath);
+        this.connection = FeedlyConnection.newConnection(object, configPath + "/connection.properties");
         this.onAuthenticated();
     }
 
@@ -171,8 +171,9 @@ public class JFeedly {
         return false;
     }
 
-    public void setConnectionFilePath(String path) {
-        this.connectionFilePath = path;
+    /** Set the path where all files (connection file + cache) will be stored */
+    public void setConfigPath(String path) {
+        this.configPath = path;
     }
 
     /** Returns a user profile */
