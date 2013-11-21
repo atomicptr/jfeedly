@@ -111,7 +111,7 @@ public class JFeedly {
 
         String urlParameters = "refresh_token=" + refreshToken + "&client_id=" + this.clientId + "&client_secret=" + this.apiSecretKey + "&grant_type=refresh_token";
 
-        String response = httpHelper.sendPostRequestToFeedly(apiUrl, urlParameters);
+        String response = httpHelper.sendPostRequestToFeedly(apiUrl, urlParameters, false, "");
 
         JSONObject object = new JSONObject(response);
 
